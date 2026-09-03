@@ -5,12 +5,13 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  // server/ is a plain Node.js backend (not part of the Vite/React app), so
-  // it's linted separately below with Node globals instead of browser ones.
+  // server/ (local dev Express backend) and api/ (Vercel serverless
+  // functions) are plain Node.js code, not part of the Vite/React app, so
+  // they're linted separately below with Node globals instead of browser ones.
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
-    ignores: ['server/**'],
+    ignores: ['server/**', 'api/**'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -30,7 +31,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['server/**/*.js'],
+    files: ['server/**/*.js', 'api/**/*.js'],
     extends: [js.configs.recommended],
     languageOptions: {
       ecmaVersion: 'latest',

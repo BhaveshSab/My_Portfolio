@@ -1,6 +1,8 @@
 // Comm_Link mail API — tiny standalone Express server that sends contact-form
-// submissions from the portfolio's "Comm_Link" section as real email, instead
-// of relying on a third-party client-side widget.
+// submissions from the portfolio's "Comm_Link" section as real email. This is
+// the LOCAL DEV counterpart of api/contact.js (the Vercel serverless function
+// used in production) — both share the same mail logic from api/_lib/mailer.js
+// so the two never drift out of sync.
 //
 // Run alongside the Vite dev server (in a second terminal):
 //   npm run server
@@ -13,7 +15,12 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import nodemailer from 'nodemailer';
+import {
+  buildTransport,
+  validateContact,
+  buildMailOptions,
+  contactToEmail,
+} from '../api/_lib/mailer.js';
 
 // Load server/.env explicitly (by file location, not process cwd) so this
 // works whether the process is started from the repo root or this folder.
@@ -21,46 +28,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const PORT = Number(process.env.PORT) || 4001;
-const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'bhavesh.sabnani2005@gmail.com';
 const CORS_ORIGINS = (process.env.CORS_ORIGIN || 'http://localhost:5173')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const COOLDOWN_MS = 30_000; // one message per IP per 30s — cheap spam guard
 
-// ---- Mail transport --------------------------------------------------------
-// Two supported setups — configure ONE of them in server/.env (copy from
-// server/.env.example):
-//   1. Gmail + an App Password (simplest if the destination is a Gmail inbox)
-//   2. Any SMTP provider (SendGrid, Mailgun, Zoho, a hosting provider, etc.)
-function buildTransport() {
-  if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-    return nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    });
-  }
-
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-  }
-
-  return null;
-}
-
-const senderAddress = process.env.GMAIL_USER || process.env.SMTP_USER;
 const transporter = buildTransport();
 
 if (!transporter) {
@@ -75,18 +48,9 @@ if (!transporter) {
     if (err) {
       console.error('[mail] Transport verification failed:', err.message);
     } else {
-      console.log(`[mail] Ready — messages will be delivered to ${CONTACT_TO_EMAIL}`);
+      console.log(`[mail] Ready — messages will be delivered to ${contactToEmail()}`);
     }
   });
-}
-
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
 
 // ---- App --------------------------------------------------------------------
@@ -103,16 +67,9 @@ app.get('/api/health', (_req, res) => {
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body || {};
 
-  if (typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100) {
-    return res.status(400).json({ success: false, error: 'Please enter a valid name.' });
-  }
-  if (typeof email !== 'string' || !EMAIL_RE.test(email.trim())) {
-    return res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
-  }
-  if (typeof message !== 'string' || message.trim().length < 5 || message.trim().length > 5000) {
-    return res
-      .status(400)
-      .json({ success: false, error: 'Message must be between 5 and 5000 characters.' });
+  const validationError = validateContact({ name, email, message });
+  if (validationError) {
+    return res.status(400).json({ success: false, error: validationError });
   }
 
   if (!transporter) {
@@ -130,26 +87,8 @@ app.post('/api/contact', async (req, res) => {
       .json({ success: false, error: 'Please wait a moment before sending another message.' });
   }
 
-  const cleanName = name.trim();
-  const cleanEmail = email.trim();
-  const cleanMessage = message.trim();
-
   try {
-    await transporter.sendMail({
-      from: `"Bhavesh Portfolio — Comm_Link" <${senderAddress}>`,
-      to: CONTACT_TO_EMAIL,
-      replyTo: cleanEmail,
-      subject: `New Comm_Link message from ${cleanName}`,
-      text: `From: ${cleanName} <${cleanEmail}>\n\n${cleanMessage}`,
-      html: `
-        <div style="font-family: monospace; color:#111; line-height:1.6;">
-          <p><strong>From:</strong> ${escapeHtml(cleanName)} (${escapeHtml(cleanEmail)})</p>
-          <p><strong>Message:</strong></p>
-          <p style="white-space:pre-wrap;">${escapeHtml(cleanMessage)}</p>
-        </div>
-      `,
-    });
-
+    await transporter.sendMail(buildMailOptions({ name, email, message }));
     lastSentAt.set(ip, Date.now());
     res.json({ success: true });
   } catch (err) {
