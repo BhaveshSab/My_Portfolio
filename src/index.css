@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #E8DFD8;
+  background-color: #000;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: #000;
+}
+
+/* Soft scroll "stopper": only the About section is a snap point, so a scroll
+   arriving from the welcome cinematic soft-lands with About's top pinned to
+   the viewport instead of sailing past it. `proximity` = gentle: snapping
+   only engages when you slow down near the section. */
+html {
+  scroll-snap-type: y proximity;
+  /* Fluent section routing: animated anchor jumps + clearance under the
+     fixed navbar so #about/#skills/#projects/#experience land cleanly */
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+.snap-stop {
+  scroll-snap-align: start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+  }
+}
+
+::selection {
+  background: #cbb59d;
+  color: #000;
+}
+
+/* 3D Core Utilities */
+.perspective-2000 {
+  perspective: 2000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.bg-radial-vignette {
+  background: radial-gradient(circle, transparent 20%, rgba(0,0,0,1) 100%);
+}
+
+@keyframes pulseShadow {
+  0% { box-shadow: 0 0 0 0 rgba(203, 181, 157, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(203, 181, 157, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(203, 181, 157, 0); }
+}
+
+.animate-pulseShadow {
+  animation: pulseShadow 2s infinite;
+}
+
+/* Slow breathing glow for the portrait's gold corner brackets */
+@keyframes bracketBreath {
+  0%, 100% { box-shadow: 0 0 8px 0 rgba(212, 175, 55, 0.15); }
+  50% { box-shadow: 0 0 24px 4px rgba(212, 175, 55, 0.55); }
+}
+
+.animate-bracketBreath {
+  animation: bracketBreath 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-bracketBreath {
+    animation: none;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
+  }
+}
+
+/* PARALLAX CSS */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.parallax-bg {
+  will-change: transform;
+}
+
+.hero-zoom {
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .reveal {
+    transition-duration: 0.6s;
+    transform: translateY(20px);
+  }
+}
+
+/* Almost-invisible slow drift on the stilled telephone frame behind the
+   COMM_LINK form, so the settled backdrop feels alive instead of frozen */
+@keyframes settleZoom {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
+
+.animate-settleZoom {
+  animation: settleZoom 34s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-settleZoom {
+    animation: none;
+  }
+}
