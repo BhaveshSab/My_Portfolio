@@ -14,11 +14,10 @@ import LetsBuildRadialBloom from './LetsBuildRadialBloom';
  *   RIGHT — the COMM_LINK glass form + gold HUD: a direct, working mail
  *           channel straight into the owner's inbox.
  *
- * NOTE on the "Built with Spline" badge: it is rendered by Spline's own
- * player inside the cross-origin iframe, so it cannot be removed with page
- * CSS. It is cropped out here with a clip-path notch in the bottom-right
- * corner. To remove it properly, open the scene in the Spline editor and
- * disable the logo under Play Settings → Logo (Hobby plan or above).
+ * NOTE on Spline's player UI (e.g. the "Built with Spline" pill): it is
+ * rendered by Spline's own player inside the cross-origin iframe and shows
+ * only on hover. The only proper way to remove it is in the Spline editor:
+ * Play Settings → Logo (Hobby plan or above).
  */
 // Comm_Link mail API (see server/index.js). In dev, Vite proxies /api to the
 // backend (vite.config.js) so this relative path just works. For a
@@ -27,15 +26,10 @@ import LetsBuildRadialBloom from './LetsBuildRadialBloom';
 const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || '/api/contact';
 
 // Spline 3D robot — cursor-following companion for the landing page.
+// The ?v= cache-buster forces the browser to refetch the scene document so a
+// stale cached copy of an older revision never lingers in the iframe.
 const SPLINE_ROBOT_URL =
-  'https://my.spline.design/robotfollowcursorforlandingpage-qw3YR8iZDtZ6IfsnPfSOhSqE/';
-
-// Crops the bottom-right corner of the iframe where Spline's player badge
-// sits (~150x30px pill at ~16px from the edges) so it never shows.
-const SPLINE_CLIP = {
-  clipPath:
-    'polygon(0 0, 100% 0, 100% calc(100% - 56px), calc(100% - 210px) calc(100% - 56px), calc(100% - 210px) 100%, 0 100%)',
-};
+  'https://my.spline.design/robotfollowcursorforlandingpage-qw3YR8iZDtZ6IfsnPfSOhSqE/?v=2';
 
 const FIELD_CLASS =
   'w-full rounded-md border border-[#8C6D4F]/40 bg-white/[0.03] px-4 py-3 text-sm text-[#E8DFD8] outline-none transition-all duration-300 placeholder:text-[#B8976B]/40 focus:border-[#D4AF37]/80 focus:bg-[#D4AF37]/[0.04] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.08)]';
@@ -91,6 +85,7 @@ const Contact = () => {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.9, ease: 'easeOut' }}
+              key={SPLINE_ROBOT_URL}
               src={SPLINE_ROBOT_URL}
               frameBorder="0"
               title="3D robot companion — follows your cursor"
@@ -98,7 +93,7 @@ const Contact = () => {
               height="100%"
               loading="lazy"
               className="absolute inset-0 h-full w-full"
-              style={{ ...SPLINE_CLIP, transform: 'scale(1.2)' }}
+              style={{ transform: 'scale(1.2)' }}
             />
 
             {/* Minimal caption overlay */}
