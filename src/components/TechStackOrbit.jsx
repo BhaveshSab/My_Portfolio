@@ -391,9 +391,11 @@ export default function TechStackOrbit() {
                 }}
               />
 
-              {/* Center Pivot Node — solid surface above the orbit so card
-                  text never shows through it */}
-              <div className="absolute left-1/2 top-1/2 z-[400] w-32 h-32 -ml-16 -mt-16 rounded-full bg-[#0a0804] border border-[#D4AF37]/40 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.15)] animate-pulseShadow">
+              {/* Center Pivot Node — solid surface, sits above the back cards
+                  but BELOW the front-most cards so the orbit reads with real
+                  depth: a card passing across the middle floats in front of
+                  the circle instead of disappearing behind it */}
+              <div className="pointer-events-none absolute left-1/2 top-1/2 z-[30] w-32 h-32 -ml-16 -mt-16 rounded-full bg-[#0a0804] border border-[#D4AF37]/40 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.15)] animate-pulseShadow">
                 <span className="text-[#D4AF37] text-[10px] font-mono tracking-widest uppercase">ENGINEER</span>
                 <span className="text-[#E8DFD8] font-bold text-lg tracking-wide">BHAVESH</span>
                 <span className="text-[9px] text-[#D9BE8E] tracking-wide text-center leading-tight px-1">SCALABLE SYSTEMS &amp; AGENTIC AI</span>
