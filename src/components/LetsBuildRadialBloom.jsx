@@ -88,7 +88,6 @@ const TILES = [
   {
     id: 'dsa',
     name: 'DSA & OOPS',
-    sub: '1200+ Problems',
     logos: [{ Icon: FiTerminal, name: 'DSA', color: '#E8DFD8' }],
   },
 ];
@@ -527,16 +526,18 @@ export default function LetsBuildRadialBloom() {
                       >
                         {tile.name}
                       </span>
-                      <span
-                        className="font-mono font-medium text-[#DCBC80] uppercase text-center"
-                        style={{
-                          fontSize: 11 * labelScale,
-                          lineHeight: 1.2,
-                          letterSpacing: '0.05em',
-                        }}
-                      >
-                        {tile.sub}
-                      </span>
+                      {tile.sub && (
+                        <span
+                          className="font-mono font-medium text-[#DCBC80] uppercase text-center"
+                          style={{
+                            fontSize: 11 * labelScale,
+                            lineHeight: 1.2,
+                            letterSpacing: '0.05em',
+                          }}
+                        >
+                          {tile.sub}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </motion.div>

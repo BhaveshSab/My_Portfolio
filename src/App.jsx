@@ -32,8 +32,8 @@ function App() {
         {/* Animated gold seam into the Let's-Build bloom — the last section
             without a designed hand-off (only ~62px separated them before) */}
         <SectionSeam />
-        {/* Interactive skill matrix + COMM_LINK — the bloom scrolls over the
-            telephone backdrop, then the right-aligned gold form takes over */}
+        {/* Let's-Build skill ecosystem, then COMM_LINK — Spline 3D robot on
+            the left, the gold contact form on the right */}
         <Contact />
         <Footer />
       </Suspense>

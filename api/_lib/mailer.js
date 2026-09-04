@@ -18,8 +18,13 @@ export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // they're set as Environment Variables in the project settings.
 export function buildTransport() {
   if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    // Explicit SMTP instead of nodemailer's `service: 'gmail'` preset: the
+    // preset connects on port 465 (SMTPS), which many networks block.
+    // Port 587 + STARTTLS is the standard, widely-allowed alternative.
     return nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // STARTTLS — nodemailer upgrades the connection automatically
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,

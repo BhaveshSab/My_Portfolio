@@ -346,9 +346,9 @@ export default function Hero() {
         >
           {/* LEFT — branding + title (always visible, high contrast) */}
           <div className="absolute left-8 md:left-[6%] lg:left-[7%] top-1/2 -translate-y-1/2 max-w-[60vw] md:max-w-[50%] lg:max-w-[52%]">
-            <div ref={brandRef} className="mb-6 will-change-transform">
+            <div ref={brandRef} className="mb-5 will-change-transform">
               <p
-                className="text-[#F0E9E1] text-base md:text-xl tracking-[0.3em] uppercase"
+                className="text-[#F0E9E1] text-sm md:text-lg tracking-[0.3em] uppercase"
                 style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.8)' }}
               >
                 Bhavesh Sabnani.
@@ -357,7 +357,7 @@ export default function Hero() {
 
             <div ref={titleRef} className="will-change-transform">
               <h1
-                className="text-4xl sm:text-5xl md:text-7xl lg:text-7xl xl:text-[clamp(4.5rem,5vw,6.5rem)] font-black tracking-tight leading-[0.98] uppercase bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] to-[#E8DFD8] drop-shadow-[0_4px_18px_rgba(0,0,0,0.85)]"
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-6xl xl:text-[clamp(3.5rem,4.2vw,5.25rem)] font-black tracking-tight leading-[0.98] uppercase bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] to-[#E8DFD8] drop-shadow-[0_4px_18px_rgba(0,0,0,0.85)]"
                 style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
               >
                 Engineering
@@ -367,7 +367,7 @@ export default function Hero() {
                 &amp; Agentic AI
               </h1>
               <p
-                className="mt-5 md:mt-6 text-base md:text-lg lg:text-xl text-[#F0E9E1] max-w-xl lg:max-w-2xl leading-relaxed"
+                className="mt-4 md:mt-5 text-sm md:text-base lg:text-lg text-[#F0E9E1] max-w-xl lg:max-w-2xl leading-relaxed"
                 style={{
                   textShadow:
                     '0 1px 2px rgba(0,0,0,0.95), 0 2px 16px rgba(0,0,0,0.85)',
@@ -385,10 +385,10 @@ export default function Hero() {
             </div>
 
             {/* Sequential role lines, staged one scroll window at a time */}
-            <div className="mt-8 md:mt-10 flex flex-wrap gap-x-8 gap-y-4">
+            <div className="mt-6 md:mt-8 flex flex-wrap gap-x-8 gap-y-4">
               <Reveal progress={scrollYProgress} range={REVEAL.roleOne} y={40}>
                 <span
-                  className="inline-flex items-center gap-2.5 text-[#F0E9E1] font-mono text-sm md:text-base lg:text-lg font-medium uppercase tracking-[0.28em]"
+                  className="inline-flex items-center gap-2.5 text-[#F0E9E1] font-mono text-xs md:text-sm lg:text-base font-medium uppercase tracking-[0.28em]"
                   style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.85)' }}
                 >
                   <span className="h-2 w-2 bg-[#D4AF37]" />
@@ -397,7 +397,7 @@ export default function Hero() {
               </Reveal>
               <Reveal progress={scrollYProgress} range={REVEAL.roleTwo} y={40}>
                 <span
-                  className="inline-flex items-center gap-2.5 text-[#F0E9E1] font-mono text-sm md:text-base lg:text-lg font-medium uppercase tracking-[0.28em]"
+                  className="inline-flex items-center gap-2.5 text-[#F0E9E1] font-mono text-xs md:text-sm lg:text-base font-medium uppercase tracking-[0.28em]"
                   style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.85)' }}
                 >
                   <span className="h-2 w-2 bg-[#D4AF37]" />
@@ -406,7 +406,7 @@ export default function Hero() {
               </Reveal>
               <Reveal progress={scrollYProgress} range={REVEAL.roleThree} y={40}>
                 <span
-                  className="inline-flex items-center gap-2.5 text-[#F0E9E1] font-mono text-sm md:text-base lg:text-lg font-medium uppercase tracking-[0.28em]"
+                  className="inline-flex items-center gap-2.5 text-[#F0E9E1] font-mono text-xs md:text-sm lg:text-base font-medium uppercase tracking-[0.28em]"
                   style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.85)' }}
                 >
                   <span className="h-2 w-2 bg-[#D4AF37]" />
@@ -420,7 +420,7 @@ export default function Hero() {
           <div className="absolute right-8 md:right-[6%] lg:right-[7%] top-1/2 -translate-y-1/2 max-w-[32vw] md:max-w-[26%] text-right">
             <Reveal progress={scrollYProgress} range={REVEAL.quote} y={26}>
               <p
-                className="text-[#F0E9E1] text-lg md:text-xl lg:text-2xl italic leading-relaxed tracking-wide"
+                className="text-[#F0E9E1] text-base md:text-lg lg:text-xl italic leading-relaxed tracking-wide"
                 style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 16px rgba(0,0,0,0.9)' }}
               >
                 &ldquo;Code is my craft. Impact is my goal.&rdquo;
@@ -433,13 +433,13 @@ export default function Hero() {
               y={22}
             >
               <span
-                className="text-[#E9C767] font-mono text-lg md:text-xl"
+                className="text-[#E9C767] font-mono text-base md:text-lg"
                 style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95)' }}
               >
                 &lt; /&gt;
               </span>
               <span
-                className="text-[#F0E9E1] text-lg md:text-xl font-medium tracking-wide"
+                className="text-[#F0E9E1] text-base md:text-lg font-medium tracking-wide"
                 style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.85)' }}
               >
                 Bhavesh
@@ -452,7 +452,7 @@ export default function Hero() {
             <Reveal progress={scrollYProgress} range={REVEAL.buttons} y={24}>
               <a
                 href="#projects"
-                className="group inline-flex items-center gap-3 px-10 py-4 border border-[#E8DFD8]/40 bg-black/30 text-[#E8DFD8] font-mono text-sm md:text-base uppercase tracking-[0.22em] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300 rounded-sm backdrop-blur-md"
+                className="group inline-flex items-center gap-3 px-8 py-3 border border-[#E8DFD8]/40 bg-black/30 text-[#E8DFD8] font-mono text-xs md:text-sm uppercase tracking-[0.22em] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300 rounded-sm backdrop-blur-md"
               >
                 Explore My Work
                 <FiArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
@@ -461,7 +461,7 @@ export default function Hero() {
             <Reveal progress={scrollYProgress} range={REVEAL.buttons} y={24}>
               <a
                 href="/resume.pdf"
-                className="group inline-flex items-center gap-3 px-10 py-4 border border-[#E8DFD8]/40 bg-black/30 text-[#E8DFD8] font-mono text-sm md:text-base uppercase tracking-[0.22em] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300 rounded-sm backdrop-blur-md"
+                className="group inline-flex items-center gap-3 px-8 py-3 border border-[#E8DFD8]/40 bg-black/30 text-[#E8DFD8] font-mono text-xs md:text-sm uppercase tracking-[0.22em] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300 rounded-sm backdrop-blur-md"
               >
                 Download Resume
                 <FiDownload size={18} className="transition-transform group-hover:translate-y-0.5" />
@@ -472,7 +472,7 @@ export default function Hero() {
           {/* BOTTOM RIGHT — gold code stamp */}
           <div className="absolute right-8 md:right-[6%] lg:right-[7%] bottom-10 md:bottom-14 text-[#D4AF37]">
             <Reveal progress={scrollYProgress} range={REVEAL.stamp} y={22}>
-              <span className="font-mono text-4xl md:text-5xl">&lt; /&gt;</span>
+              <span className="font-mono text-3xl md:text-4xl">&lt; /&gt;</span>
             </Reveal>
           </div>
         </div>

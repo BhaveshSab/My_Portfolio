@@ -224,10 +224,10 @@ export default function About() {
                     transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.26 }}
                     className="space-y-3"
                 >
-                    <p className="text-[#cbb59d] font-mono text-xs md:text-sm uppercase tracking-[0.5em]">SYSTEM INFO</p>
+                    <p className="text-[#cbb59d] font-mono text-[10px] md:text-xs uppercase tracking-[0.5em]">SYSTEM INFO</p>
                     <h2
                         ref={headingRef}
-                        className="text-4xl md:text-5xl lg:text-7xl font-black text-[#E8DFD8] tracking-tighter uppercase"
+                        className="text-3xl md:text-4xl lg:text-6xl font-black text-[#E8DFD8] tracking-tighter uppercase"
                     >
                         About Me<span className="text-[#cbb59d]">.</span>
                     </h2>
@@ -239,7 +239,7 @@ export default function About() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={revealed ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.42 }}
-                        className="text-[#E8DFD8] text-base md:text-lg lg:text-xl xl:text-2xl leading-relaxed max-w-2xl"
+                        className="text-[#E8DFD8] text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed max-w-2xl"
                     >
                         I'm a results-driven <span className="text-[#D4AF37] font-semibold">Software Engineer</span> who <span className="text-[#D4AF37] font-semibold">engineers scalable systems and agentic AI</span> — spanning high-concurrency backends, modern full-stack interfaces, and autonomous LLM orchestration. I build secure, high-performance web systems with <span className="text-[#cbb59d] font-medium">Next.js</span>, <span className="text-[#cbb59d] font-medium">Express.js</span>, <span className="text-[#cbb59d] font-medium">WebSockets</span>, and <span className="text-[#cbb59d] font-medium">AWS</span> cloud-native architecture, and I architect privacy-first B2B systems that balance absolute user privacy with real-time alerting.
                     </motion.p>
@@ -247,7 +247,7 @@ export default function About() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={revealed ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.46 }}
-                        className="text-[#E8DFD8] text-base md:text-lg lg:text-xl xl:text-2xl leading-relaxed max-w-2xl"
+                        className="text-[#E8DFD8] text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed max-w-2xl"
                     >
                         Strong DSA and OOPs fundamentals — <span className="text-[#D4AF37] font-semibold">200+ LeetCode problems solved</span> — keep my code clean and highly optimized. Currently pursuing my B.Tech in Electrical Engineering at Punjab Engineering College, Chandigarh (GPA 7.69/10), with a JEE Mains score in the 98.04 percentile.
                     </motion.p>
@@ -266,8 +266,8 @@ export default function About() {
                             <div className="text-[#cbb59d] mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
                                 {item.icon}
                             </div>
-                            <h4 className="text-[#E8DFD8] text-base md:text-lg font-bold uppercase tracking-widest mb-2">{item.title}</h4>
-                            <p className="text-[#C0A68A] text-sm md:text-base leading-relaxed">{item.desc}</p>
+                            <h4 className="text-[#E8DFD8] text-sm md:text-base font-bold uppercase tracking-widest mb-2">{item.title}</h4>
+                            <p className="text-[#C0A68A] text-xs md:text-sm leading-relaxed">{item.desc}</p>
                         </motion.div>
                     ))}
                 </div>

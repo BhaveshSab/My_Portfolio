@@ -119,20 +119,3 @@ html {
   }
 }
 
-/* Almost-invisible slow drift on the stilled telephone frame behind the
-   COMM_LINK form, so the settled backdrop feels alive instead of frozen */
-@keyframes settleZoom {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.025); }
-}
-
-.animate-settleZoom {
-  animation: settleZoom 34s ease-in-out infinite;
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-settleZoom {
-    animation: none;
-  }
-}
