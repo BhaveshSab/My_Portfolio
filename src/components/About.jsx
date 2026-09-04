@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiAward, FiBookOpen, FiCode, FiDownload, FiLayers } from 'react-icons/fi';
+import { TextShimmer } from './ui/text-shimmer';
 
 // Shared ease so every reveal in this section moves with the same rhythm.
 const EASE = [0.22, 1, 0.36, 1];
@@ -277,20 +278,26 @@ export default function About() {
             <motion.h2
               ref={headingRef}
               aria-label="About Me."
-              className="text-3xl md:text-4xl lg:text-6xl font-black text-[#E8DFD8] tracking-tighter uppercase"
+              className="text-3xl md:text-4xl lg:text-6xl font-black tracking-tighter uppercase"
             >
-              {HEADING_TEXT.split('').map((ch, i) => (
-                <motion.span
-                  key={i}
-                  aria-hidden
-                  initial={{ opacity: 0, y: 30, rotate: 6 }}
-                  animate={headerShown ? { opacity: 1, y: 0, rotate: 0 } : {}}
-                  transition={{ duration: 0.5, ease: EASE, delay: 0.1 + i * 0.045 }}
-                  className={`inline-block ${ch === '.' ? 'text-[#cbb59d]' : ''}`}
-                >
-                  {ch === ' ' ? '\u00A0' : ch}
-                </motion.span>
-              ))}
+              <TextShimmer
+                className="[--base-gradient-color:#FFFFFF]"
+                duration={2.8}
+                baseGradient="linear-gradient(to right, #FFFFFF 0%, #F4ECDB 60%, #E9D5A2 100%)"
+              >
+                {HEADING_TEXT.split('').map((ch, i) => (
+                  <motion.span
+                    key={i}
+                    aria-hidden
+                    initial={{ opacity: 0, y: 30, rotate: 6 }}
+                    animate={headerShown ? { opacity: 1, y: 0, rotate: 0 } : {}}
+                    transition={{ duration: 0.5, ease: EASE, delay: 0.1 + i * 0.045 }}
+                    className={`inline-block ${ch === '.' ? 'text-[#E9C768]' : ''}`}
+                  >
+                    {ch === ' ' ? '\u00A0' : ch}
+                  </motion.span>
+                ))}
+              </TextShimmer>
             </motion.h2>
 
             {/* gold underline that draws itself under the title */}

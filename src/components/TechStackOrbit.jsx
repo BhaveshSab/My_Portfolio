@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TextShimmer } from './ui/text-shimmer';
 import {
   FiBox,
   FiCloud,
@@ -337,9 +338,15 @@ export default function TechStackOrbit() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-black text-[#E8DFD8] tracking-tighter uppercase"
+          className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase"
         >
-          Technical Capabilities<span className="text-[#cbb59d]">.</span>
+          <TextShimmer
+            className="[--base-gradient-color:#FFFFFF]"
+            baseGradient="linear-gradient(to right, #FFFFFF 0%, #F3EAD6 70%, #E9D6A4 100%)"
+          >
+            Technical Capabilities
+          </TextShimmer>
+          <span className="text-[#EBD079]">.</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useScroll, useSpring, useTransform } from 'framer-motion';
 import { FiArrowRight, FiDownload } from 'react-icons/fi';
+import { TextShimmer } from './ui/text-shimmer';
 
 /**
  * Person cinematic — 117 exported frames (1920×1080 upscaled export,
@@ -356,15 +357,14 @@ export default function Hero() {
             </div>
 
             <div ref={titleRef} className="will-change-transform">
-              <h1
-                className="text-3xl sm:text-4xl md:text-6xl lg:text-6xl xl:text-[clamp(3.5rem,4.2vw,5.25rem)] font-black tracking-tight leading-[0.98] uppercase bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] to-[#E8DFD8] drop-shadow-[0_4px_18px_rgba(0,0,0,0.85)]"
-                style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-              >
-                Engineering
-                <br />
-                Scalable Systems
-                <br />
-                &amp; Agentic AI
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-6xl xl:text-[clamp(3.5rem,4.2vw,5.25rem)] font-black tracking-tight leading-[0.98] uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.85)]">
+                <TextShimmer
+                  className="whitespace-pre-line [--base-gradient-color:#FFF3D0]"
+                  duration={3.2}
+                  baseGradient="linear-gradient(to right, #D4AF37, #E8DFD8)"
+                >
+                  {'Engineering\nScalable Systems\n& Agentic AI'}
+                </TextShimmer>
               </h1>
               <p
                 className="mt-4 md:mt-5 text-sm md:text-base lg:text-lg text-[#F0E9E1] max-w-xl lg:max-w-2xl leading-relaxed"

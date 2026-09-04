@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { TextShimmer } from './ui/text-shimmer';
 
 // Education & milestone timeline data (verified resume details)
 const MILESTONES = [
@@ -78,16 +79,16 @@ export default function EducationMilestonesTimeline() {
             </span>
             <div className="h-[1px] w-14 bg-[#D4AF37]/50" />
           </div>
-          <h2 className="text-[38px] sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase leading-[1.02] tracking-tighter">
-            <span className="text-[#F3EEE7] drop-shadow-[0_0_18px_rgba(243,238,231,0.25)]">
-              Education &amp;
-            </span>
-            <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[#F8E7B0] via-[#E8C68A] to-[#B8860B] drop-shadow-[0_0_24px_rgba(212,175,55,0.35)]">
-              Achievements.
-            </span>
+          <h2 className="text-[38px] sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase leading-[1.02] tracking-tighter drop-shadow-[0_0_24px_rgba(212,175,55,0.25)]">
+            <TextShimmer
+              className="whitespace-pre-line [--base-gradient-color:#FFFFFF]"
+              duration={3}
+              baseGradient="linear-gradient(to bottom, #FFFFFF 0%, #FFFFFF 49%, #FCE9BC 50%, #F0CC7E 74%, #CFA250 100%)"
+            >
+              {'Education &\nAchievements.'}
+            </TextShimmer>
           </h2>
-          <p className="text-[#C4A472] text-[15px] md:text-[17px] mt-5 max-w-2xl font-light leading-relaxed">
+          <p className="text-[#E8D2A9] text-[15px] md:text-[17px] mt-5 max-w-2xl font-normal leading-relaxed">
             Certifications, competitive achievements, and the academic journey that shaped my
             engineering fundamentals.
           </p>

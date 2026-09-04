@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiSend, FiShield, FiDownload } from 'react-icons/fi';
+import { TextShimmer } from './ui/text-shimmer';
 import LetsBuildRadialBloom from './LetsBuildRadialBloom';
 
 /**
@@ -26,16 +27,17 @@ import LetsBuildRadialBloom from './LetsBuildRadialBloom';
 const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || '/api/contact';
 
 // Spline 3D robot — cursor-following companion for the landing page.
-// The ?v= cache-buster forces the browser to refetch the scene document so a
-// stale cached copy of an older revision never lingers in the iframe.
+// The ?v= query is a cache-buster: Spline publishes scene updates at the SAME
+// URL, and browsers cache the iframe document — without it you keep seeing the
+// stale (pink) revision instead of the latest (yellow) one published in Spline.
 const SPLINE_ROBOT_URL =
-  'https://my.spline.design/robotfollowcursorforlandingpage-qw3YR8iZDtZ6IfsnPfSOhSqE/?v=2';
+  'https://my.spline.design/robotfollowcursorforlandingpage-qw3YR8iZDtZ6IfsnPfSOhSqE/?v=4';
 
 const FIELD_CLASS =
-  'w-full rounded-md border border-[#8C6D4F]/40 bg-white/[0.03] px-4 py-3 text-sm text-[#E8DFD8] outline-none transition-all duration-300 placeholder:text-[#B8976B]/40 focus:border-[#D4AF37]/80 focus:bg-[#D4AF37]/[0.04] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.08)]';
+  'w-full rounded-md border border-[#8C6D4F]/70 bg-white/[0.04] px-4 py-3 text-sm text-[#F2EAE0] outline-none transition-all duration-300 placeholder:text-[#C9A879]/80 focus:border-[#F2D26B] focus:bg-[#D4AF37]/[0.05] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.12)]';
 
 const LABEL_CLASS =
-  'flex items-center gap-2 text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-[#cbb59d]';
+  'flex items-center gap-2 text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-[#EFE3CE]';
 
 const Contact = () => {
   const [name, setName] = useState('');
@@ -75,10 +77,10 @@ const Contact = () => {
       {/* ============ COMM_LINK — full-bleed Spline robot (left) + secure form (right) ============ */}
       <div id="contactme" className="relative scroll-mt-24">
         <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
-          {/* LEFT — Spline 3D robot, edge-to-edge, no card. The embed is
-              zoomed ~20% so the robot reads big in the column — Spline fits
-              the whole scene to the iframe, so a center scale crops the
-              dark edges and lets the model dominate. */}
+          {/* LEFT — Spline 3D robot, edge-to-edge, no card, no zoom crop.
+              The scene plays at native framing so no hard cut line ever runs
+              across the model (zooming into the embed slices the floor glow
+              and reads as a boundary). */}
           <div className="relative h-[70vh] overflow-hidden lg:h-auto">
             <motion.iframe
               initial={{ opacity: 0 }}
@@ -93,12 +95,31 @@ const Contact = () => {
               height="100%"
               loading="lazy"
               className="absolute inset-0 h-full w-full"
-              style={{ transform: 'scale(1.2)' }}
+              style={{ transform: 'scale(1.15)' }}
+            />
+
+            {/* Edge melts — a gentle vignette + side fades dissolve the zoom
+                crop into black, so the robot reads bigger with no hard
+                boundary line across the model or its glow. */}
+            <div
+              className="pointer-events-none absolute inset-0 z-[6]"
+              style={{
+                background:
+                  'radial-gradient(ellipse 85% 80% at 50% 46%, transparent 52%, rgba(0,0,0,0.5) 100%)',
+              }}
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 left-0 z-[6] w-[12%]"
+              style={{ background: 'linear-gradient(to right, #000 0%, transparent 100%)' }}
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 right-0 z-[6] w-[12%]"
+              style={{ background: 'linear-gradient(to left, #000 0%, transparent 100%)' }}
             />
 
             {/* Minimal caption overlay */}
-            <span className="pointer-events-none absolute bottom-5 left-6 z-10 flex items-center gap-2 text-[9px] font-mono uppercase tracking-[0.3em] text-[#cbb59d]">
-              <span className="text-[#D4AF37]">◈</span>
+            <span className="pointer-events-none absolute bottom-5 left-6 z-10 flex items-center gap-2 text-[9px] font-mono uppercase tracking-[0.3em] text-[#D9C08F]">
+              <span className="text-[#E5C158]">◈</span>
               Interactive_3D :: Spline
             </span>
           </div>
@@ -117,13 +138,15 @@ const Contact = () => {
                 <span className="text-[10px] font-mono tracking-[0.5em] uppercase text-[#D4AF37]">
                   Protocol: Secure_Data
                 </span>
-                <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-[#E8DFD8] uppercase tracking-tighter mt-3 leading-none">
-                  Comm
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#F4D98A] via-[#E4C15C] to-[#D4AF37] drop-shadow-[0_0_18px_rgba(212,175,55,0.35)]">
-                    _Link
-                  </span>
+                <h2 className="text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter mt-3 leading-none">
+                  <TextShimmer
+                    className="[--base-gradient-color:#FFFFFF] drop-shadow-[0_0_18px_rgba(212,175,55,0.4)]"
+                    baseGradient="linear-gradient(to right, #FFFFFF 0%, #FFFFFF 30%, #F7E9C4 42%, #F0CE72 72%, #DCAF46 100%)"
+                  >
+                    Comm_Link
+                  </TextShimmer>
                 </h2>
-                <div className="mt-5 flex items-center gap-3 text-[9px] font-mono tracking-[0.4em] uppercase text-[#cbb59d]">
+                <div className="mt-5 flex items-center gap-3 text-[9px] font-mono tracking-[0.4em] uppercase text-[#E5C158]">
                   <span className="h-px w-10 bg-[#D4AF37]/40" />
                   <span>Establish a secure line</span>
                 </div>
@@ -141,7 +164,7 @@ const Contact = () => {
                     <span className="h-2.5 w-2.5 rounded-full bg-[#D4AF37]/50" />
                     <span className="h-2.5 w-2.5 rounded-full bg-[#D4AF37]/25" />
                   </div>
-                  <span className="text-[9px] tracking-[0.35em] uppercase text-[#cbb59d]">
+                  <span className="text-[9px] tracking-[0.35em] uppercase text-[#E9DCC7]">
                     Secure_Channel :: v1.0
                   </span>
                 </div>
@@ -201,7 +224,7 @@ const Contact = () => {
 
                   {/* Footer row — live channel status + transmit */}
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
-                    <div className="flex items-center gap-2.5 text-[9px] tracking-[0.3em] uppercase text-[#cbb59d]">
+                    <div className="flex items-center gap-2.5 text-[9px] tracking-[0.3em] uppercase text-[#E9DCC7]">
                       <FiShield className="text-[#D4AF37]/80" />
                       <span>Encrypted_Channel :: TLS</span>
                       <span className="relative flex h-1.5 w-1.5">
@@ -240,17 +263,17 @@ const Contact = () => {
 
               {/* Alternate channels — real click-to-email / click-to-call */}
               <div className="mt-7 flex flex-wrap items-center justify-start gap-x-6 gap-y-2 font-mono text-[10px] tracking-[0.2em] uppercase">
-                <a
-                  href="mailto:bhavesh.sabnani2005@gmail.com"
-                  className="text-[#cbb59d] hover:text-[#D4AF37] transition-colors"
-                >
+              <a
+                href="mailto:bhavesh.sabnani2005@gmail.com"
+                className="text-[#E9DCC7] hover:text-[#F2D26B] transition-colors"
+              >
                   bhavesh.sabnani2005@gmail.com
                 </a>
                 <span className="hidden sm:inline text-white/20">|</span>
-                <a
-                  href="tel:+919664320613"
-                  className="text-[#cbb59d] hover:text-[#D4AF37] transition-colors"
-                >
+              <a
+                href="tel:+919664320613"
+                className="text-[#E9DCC7] hover:text-[#F2D26B] transition-colors"
+              >
                   +91 96643 20613
                 </a>
               </div>

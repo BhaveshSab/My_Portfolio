@@ -13,6 +13,7 @@ import {
   SiFramer,
 } from "react-icons/si";
 import { FiShield, FiGitBranch, FiMessageSquare, FiZap, FiHardDrive, FiCode } from "react-icons/fi";
+import { TextShimmer } from "./ui/text-shimmer";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -271,12 +272,14 @@ const Portfolio = () => {
           initial={{ opacity: 0, y: 28 }}
           animate={headerLive ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, ease: EASE, delay: 0.08 }}
-          className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white uppercase"
+          className="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase"
         >
-          PROJECT{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#E8DFD8] via-[#cbb59d] to-[#D4AF37]">
-            PORTFOLIO.
-          </span>
+          <TextShimmer
+            className="[--base-gradient-color:#FFF6E0]"
+            baseGradient="linear-gradient(to right, #ffffff 0%, #ffffff 34%, #E8DFD8 46%, #cbb59d 72%, #D4AF37 100%)"
+          >
+            Project Portfolio.
+          </TextShimmer>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 22 }}
