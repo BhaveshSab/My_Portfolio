@@ -341,12 +341,12 @@ export default function TechStackOrbit() {
           className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase"
         >
           <TextShimmer
-            className="[--base-gradient-color:#FFFFFF]"
-            baseGradient="linear-gradient(to right, #FFFFFF 0%, #F3EAD6 70%, #E9D6A4 100%)"
+            className="[--base-gradient-color:#FFFDF4]"
+            baseGradient="linear-gradient(to right, #FFF2C9 0%, #F5D684 30%, #ECC45E 58%, #DFB149 80%, #CE9B37 100%)"
           >
             Technical Capabilities
           </TextShimmer>
-          <span className="text-[#EBD079]">.</span>
+          <span className="text-[#F2CD6F]">.</span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -391,11 +391,12 @@ export default function TechStackOrbit() {
                 }}
               />
 
-              {/* Center Pivot Node */}
-              <div className="absolute left-1/2 top-1/2 z-20 w-32 h-32 -ml-16 -mt-16 rounded-full bg-black/90 border border-[#D4AF37]/40 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.15)] backdrop-blur-2xl animate-pulseShadow">
+              {/* Center Pivot Node — solid surface above the orbit so card
+                  text never shows through it */}
+              <div className="absolute left-1/2 top-1/2 z-[400] w-32 h-32 -ml-16 -mt-16 rounded-full bg-[#0a0804] border border-[#D4AF37]/40 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.15)] animate-pulseShadow">
                 <span className="text-[#D4AF37] text-[10px] font-mono tracking-widest uppercase">ENGINEER</span>
                 <span className="text-[#E8DFD8] font-bold text-lg tracking-wide">BHAVESH</span>
-                <span className="text-[10px] text-[#B8976B] tracking-wide">SCALABLE SYSTEMS &amp; AGENTIC AI</span>
+                <span className="text-[9px] text-[#D9BE8E] tracking-wide text-center leading-tight px-1">SCALABLE SYSTEMS &amp; AGENTIC AI</span>
               </div>
 
               {/* Orbiting Section Cards */}
@@ -545,10 +546,11 @@ export default function TechStackOrbit() {
                           maskComposite: 'exclude',
                         }}
                       />
-                      {/* Card surface — warm dark variant with soft gold inner glow when leading */}
+                      {/* Card surface — fully opaque so text from the cards
+                          orbiting behind can never bleed through the surface */}
                       <div
-                        className={`relative w-full h-full rounded-[14px] backdrop-blur-2xl p-7 flex flex-col overflow-hidden transition-colors duration-700 ${
-                          isFrontGlow ? 'bg-[#0f0b04]/95' : 'bg-black/90'
+                        className={`relative w-full h-full rounded-[14px] p-7 flex flex-col overflow-hidden transition-colors duration-700 ${
+                          isFrontGlow ? 'bg-[#140e06]' : 'bg-[#0d0a05]'
                         }`}
                       >
                         {/* Inner gold glow for the front card */}
@@ -592,7 +594,7 @@ export default function TechStackOrbit() {
                           {category.title}
                         </h3>
                         <span className="mt-2.5 block h-[2px] w-full origin-left scale-x-[0.25] bg-gradient-to-r from-[#D4AF37] to-[#cbb59d]/40 transition-transform duration-500 group-hover:scale-x-100" />
-                        <p className="text-[13px] text-[#B8976B] leading-snug mt-2.5">{category.tagline}</p>
+                        <p className="text-[13px] text-[#D4B88A] leading-snug mt-2.5">{category.tagline}</p>
 
                         {/* Large brand-logo dock — replays its rise when this card reaches the front */}
                         <SkillDock

@@ -281,9 +281,9 @@ export default function About() {
               className="text-3xl md:text-4xl lg:text-6xl font-black tracking-tighter uppercase"
             >
               <TextShimmer
-                className="[--base-gradient-color:#FFFFFF]"
+                className="[--base-gradient-color:#FFFDF4]"
                 duration={2.8}
-                baseGradient="linear-gradient(to right, #FFFFFF 0%, #F4ECDB 60%, #E9D5A2 100%)"
+                baseGradient="linear-gradient(to right, #FFF6DA 0%, #F7DD97 28%, #EFC866 55%, #E0B44E 78%, #D2A03C 100%)"
               >
                 {HEADING_TEXT.split('').map((ch, i) => (
                   <motion.span
