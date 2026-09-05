@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FiSend, FiShield, FiDownload } from 'react-icons/fi';
+import { FiSend, FiShield, FiDownload, FiGithub, FiLinkedin, FiInstagram } from 'react-icons/fi';
 import { TextShimmer } from './ui/text-shimmer';
 import LetsBuildRadialBloom from './LetsBuildRadialBloom';
 import useIsMobile from '../utils/useIsMobile';
@@ -46,6 +46,18 @@ const Contact = () => {
   // Phones skip the Spline robot entirely (WebGL iframes are heavy on small
   // devices) — the form gets the full width. Desktop keeps the split.
   const isMobile = useIsMobile();
+  // Whether to hide the HUD loading overlay. The Spline page's own body is
+  // transparent, so between the iframe's HTML loading (fast) and the WebGL
+  // scene painting its first frame (~2-3s) the iframe's white base shows
+  // through — releasing the overlay on iframe onLoad exposed exactly that
+  // white box. Instead the overlay is held for the full boot window (~3.2s)
+  // so it covers the white gap and fades just as the robot appears. If the
+  // scene is ever slower, what shows after the fade is black, never white.
+  const [splineReady, setSplineReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSplineReady(true), 3500);
+    return () => clearTimeout(t);
+  }, []);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -89,29 +101,53 @@ const Contact = () => {
               and reads as a boundary). Desktop only — phones skip the
               WebGL iframe entirely and get the full-width form. */}
           {!isMobile && (
-          <div className="relative h-[70vh] overflow-hidden lg:h-auto">
-            {/* Backdrop shown until the Spline document paints, so the panel
-                never reads as a broken black void while the scene loads. */}
-            <div className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center">
-              <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.35em] text-[#D9C08F]/60">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#D4AF37]" />
-                Syncing_3D_Module
-              </span>
+          <div className="relative h-[70vh] overflow-hidden bg-black lg:h-auto">
+            {/* HUD loading overlay — covers the full scene-boot window
+                (~3.2s), including the iframe's white flash before the WebGL
+                scene paints, so the panel reads as a deliberate loading state
+                and the robot fades in cleanly. */}
+            <div
+              className={`pointer-events-none absolute inset-0 z-[5] flex flex-col items-center justify-center bg-[#070502] transition-opacity duration-700 ${
+                splineReady ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
+              {/* Gold HUD corner brackets */}
+              <div className="absolute left-5 top-5 h-6 w-6 border-l-2 border-t-2 border-[#D4AF37]/40" />
+              <div className="absolute right-5 top-5 h-6 w-6 border-r-2 border-t-2 border-[#D4AF37]/40" />
+              <div className="absolute bottom-5 left-5 h-6 w-6 border-b-2 border-l-2 border-[#D4AF37]/40" />
+              <div className="absolute bottom-5 right-5 h-6 w-6 border-b-2 border-r-2 border-[#D4AF37]/40" />
+              {/* faint scanline sheen */}
+              <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent" />
+
+              <div className="flex flex-col items-center gap-4 px-6 text-center">
+                <span className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.4em] text-[#E5C158]">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.9)]" />
+                  Syncing_3D_Module
+                </span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-[#D9C08F]/50">
+                  Establishing_Render_Link&hellip;
+                </span>
+              </div>
             </div>
+
             {/* Always-visible, eager iframe: no IntersectionObserver-gated
                 opacity fade and no loading="lazy" — lazy-loading is itself
                 IO-driven, and in throttled/embedded views those callbacks can
                 starve so the scene never starts. Eager + visible + the
                 browser-cached URL means it begins loading immediately on page
-                load and is instant on refresh. */}
+                load. The iframe element itself gets an opaque black
+                background: Spline's page body is transparent, so while its
+                WebGL scene is still painting, the browser's white base would
+                otherwise show through as a white box — black kills that
+                white flash permanently, whatever the scene's load time. */}
             <iframe
               src={SPLINE_ROBOT_URL}
               frameBorder="0"
               title="3D robot companion — follows your cursor"
               width="100%"
               height="100%"
-              className="absolute inset-0 h-full w-full"
-              style={{ transform: 'scale(1.15)' }}
+              className="absolute inset-0 h-full w-full bg-black"
+              style={{ transform: 'scale(1.15)', background: '#000' }}
             />
 
             {/* Edge melts — a gentle vignette + side fades dissolve the zoom
@@ -295,17 +331,54 @@ const Contact = () => {
                 </a>
               </div>
 
-              {/* Resume download — gold-bordered CTA under the form */}
-              <motion.a
-                href="/resume.pdf"
-                download="Bhavesh_Sabnani_Resume.pdf"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="mt-8 inline-flex items-center gap-3 px-7 py-3.5 rounded-lg bg-transparent border-2 border-[#D4AF37]/80 text-[#D4AF37] font-mono text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-[#D4AF37] hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(212,175,55,0.15)] hover:shadow-[0_0_34px_rgba(212,175,55,0.4)]"
-              >
-                <FiDownload className="text-sm" />
-                Download Resume
-              </motion.a>
+              {/* Resume download + social links side by side */}
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <motion.a
+                  href="/resume.pdf"
+                  download="Bhavesh_Sabnani_Resume.pdf"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-3 px-7 py-3.5 rounded-lg bg-transparent border-2 border-[#D4AF37]/80 text-[#D4AF37] font-mono text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-[#D4AF37] hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(212,175,55,0.15)] hover:shadow-[0_0_34px_rgba(212,175,55,0.4)]"
+                >
+                  <FiDownload className="text-sm" />
+                  Download Resume
+                </motion.a>
+
+                {/* Social links — GitHub / LinkedIn / Instagram */}
+                <div className="flex items-center gap-3">
+                  {[
+                    {
+                      icon: <FiGithub size={17} />,
+                      label: 'GitHub',
+                      url: 'https://github.com/BhaveshSab',
+                    },
+                    {
+                      icon: <FiLinkedin size={17} />,
+                      label: 'LinkedIn',
+                      url: 'https://www.linkedin.com/in/bhavesh-sabnani-256946372/',
+                    },
+                    {
+                      icon: <FiInstagram size={17} />,
+                      label: 'Instagram',
+                      url: 'https://www.instagram.com/bhaveshsab184',
+                    },
+                  ].map((social) => (
+                    <motion.a
+                      key={social.label}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      title={social.label}
+                      whileHover={{ y: -4, scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#cbb59d]/30 bg-[#cbb59d]/10 text-[#D9C08F] transition-all duration-300 hover:border-[#D4AF37] hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] hover:shadow-[0_0_16px_rgba(212,175,55,0.25)]"
+                    >
+                      {social.icon}
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
