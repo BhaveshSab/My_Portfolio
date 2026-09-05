@@ -151,7 +151,31 @@ export default function LetsBuildRadialBloom() {
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
 
-  const isInView = useInView(sectionRef, { amount: 0.25 });
+  // Scroll fallback for in-view detection: some embedded webviews / throttled
+  // tabs starve IntersectionObserver (which framer's useInView relies on),
+  // leaving the burst stuck at scale 0.35 forever. A cheap scroll+resize
+  // check mirrors the section's on-screen state, so the burst fires and the
+  // collapse-on-exit still works everywhere. When IO works normally this just
+  // tracks the same state redundantly.
+  const [scrollInView, setScrollInView] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      setScrollInView(r.top < vh * 0.85 && r.bottom > vh * 0.15);
+    };
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    check();
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, []);
+  const ioInView = useInView(sectionRef, { amount: 0.25 });
+  const isInView = ioInView || scrollInView;
 
   // The stage is transform-scaled to fit, so a fixed design-px label shrinks
   // with it — the 10px sub-labels rendered at ~8px on a 1366x768 laptop, which

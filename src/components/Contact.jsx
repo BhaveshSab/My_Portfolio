@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FiSend, FiShield, FiDownload } from 'react-icons/fi';
 import { TextShimmer } from './ui/text-shimmer';
 import LetsBuildRadialBloom from './LetsBuildRadialBloom';
+import useIsMobile from '../utils/useIsMobile';
 
 /**
  * COMM_LINK — secure contact bridge.
@@ -40,6 +41,9 @@ const LABEL_CLASS =
   'flex items-center gap-2 text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-[#EFE3CE]';
 
 const Contact = () => {
+  // Phones skip the Spline robot entirely (WebGL iframes are heavy on small
+  // devices) — the form gets the full width. Desktop keeps the split.
+  const isMobile = useIsMobile();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -80,7 +84,9 @@ const Contact = () => {
           {/* LEFT — Spline 3D robot, edge-to-edge, no card, no zoom crop.
               The scene plays at native framing so no hard cut line ever runs
               across the model (zooming into the embed slices the floor glow
-              and reads as a boundary). */}
+              and reads as a boundary). Desktop only — phones skip the
+              WebGL iframe entirely and get the full-width form. */}
+          {!isMobile && (
           <div className="relative h-[70vh] overflow-hidden lg:h-auto">
             <motion.iframe
               initial={{ opacity: 0 }}
@@ -123,6 +129,7 @@ const Contact = () => {
               Interactive_3D :: Spline
             </span>
           </div>
+          )}
 
           {/* RIGHT — COMM_LINK glass form (gold theme) */}
           <div className="flex items-center justify-center px-6 py-20 sm:px-10 md:px-14 lg:px-16">

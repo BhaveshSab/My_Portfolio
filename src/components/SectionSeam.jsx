@@ -19,7 +19,7 @@ const SectionSeam = () => {
     <div
       ref={ref}
       aria-hidden
-      className="relative w-full bg-black flex items-center justify-center -my-3 md:-my-4 overflow-visible select-none pointer-events-none"
+      className="relative w-full bg-black flex items-center justify-center -my-3 md:-my-4 overflow-hidden select-none pointer-events-none"
     >
       {/* Soft halo behind the whole seam */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

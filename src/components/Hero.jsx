@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import useIsMobile from '../utils/useIsMobile';
 import { FiArrowRight, FiDownload } from 'react-icons/fi';
 import { TextShimmer } from './ui/text-shimmer';
 
@@ -79,7 +80,7 @@ function Reveal({ progress, range, className, children, y = 30 }) {
   );
 }
 
-export default function Hero() {
+function DesktopHero() {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const imagesRef = useRef([]);
@@ -488,4 +489,169 @@ export default function Hero() {
       </div>
     </section>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* MOBILE — phones get a lightweight hero: ONE static frame instead of */
+/* the 117-frame canvas scrub (which fights touch scrolling and stalls  */
+/* on phones), and the copy sits in normal flow with a single timed     */
+/* stagger entrance instead of scroll-scrubbed reveals. Nothing heavy,  */
+/* nothing scroll-linked — everything is readable the moment it lands.  */
+/* Desktop keeps the full cinematic above, untouched.                   */
+/* ------------------------------------------------------------------ */
+const MOBILE_STATIC_FRAME = frameUrl(55);
+
+const mobileStagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.14, delayChildren: 0.15 } },
+};
+
+const mobileItem = {
+  hidden: { opacity: 0, y: 26 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+function MobileHero() {
+  return (
+    <section
+      data-hero
+      id="hero"
+      aria-label="Hero — Engineering scalable systems & agentic AI"
+      className="relative min-h-screen bg-black font-sans tracking-wide overflow-hidden"
+    >
+      {/* Static frame — one image, object-cover, no canvas, no preload storm */}
+      <div className="absolute inset-0">
+        <img
+          src={MOBILE_STATIC_FRAME}
+          alt=""
+          aria-hidden
+          className="h-full w-full object-cover"
+          loading="eager"
+        />
+        {/* Legibility scrims — same layering as the desktop hero */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
+      </div>
+
+      {/* Cinematic vignette */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 125% 95% at 50% 40%, transparent 42%, rgba(0,0,0,0.65) 100%)',
+        }}
+      />
+
+      {/* Copy — normal flow, one-time staggered entrance */}
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={mobileStagger}
+        className="relative z-50 flex min-h-screen flex-col justify-center px-6 sm:px-10 pb-16 pt-24"
+      >
+        <motion.div variants={mobileItem}>
+          <p
+            className="text-[#F0E9E1] text-sm tracking-[0.3em] uppercase"
+            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.8)' }}
+          >
+            Bhavesh Sabnani.
+          </p>
+        </motion.div>
+
+        <motion.div variants={mobileItem} className="mt-4">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-[1.02] uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.85)]">
+            <TextShimmer
+              className="whitespace-pre-line [--base-gradient-color:#FFF3D0]"
+              duration={3.2}
+              baseGradient="linear-gradient(to right, #D4AF37, #E8DFD8)"
+            >
+              {'Engineering\nScalable Systems\n& Agentic AI'}
+            </TextShimmer>
+          </h1>
+          <p
+            className="mt-4 text-sm text-[#F0E9E1] max-w-xl leading-relaxed"
+            style={{
+              textShadow: '0 1px 2px rgba(0,0,0,0.95), 0 2px 16px rgba(0,0,0,0.85)',
+            }}
+          >
+            <span className="font-semibold text-[#F7F2EB]">Full-Stack Engineer</span>{' '}
+            shipping high-concurrency{' '}
+            <span className="font-medium text-[#E9C767]">Node.js &amp; NestJS</span>{' '}
+            backends, fluid{' '}
+            <span className="font-medium text-[#E9C767]">React &amp; Next.js</span>{' '}
+            interfaces, and autonomous{' '}
+            <span className="font-medium text-[#E9C767]">LLM orchestration</span>{' '}
+            pipelines &mdash; secure, real-time systems built to scale.
+          </p>
+        </motion.div>
+
+        {/* Role tags — all three visible at once on mobile (no scroll staging) */}
+        <motion.div
+          variants={mobileItem}
+          className="mt-6 flex flex-wrap gap-x-5 gap-y-3"
+        >
+          {['Software Engineer', 'Full Stack Development', 'AI Orchestration'].map(
+            (role) => (
+              <span
+                key={role}
+                className="inline-flex items-center gap-2.5 text-[#F0E9E1] font-mono text-xs font-medium uppercase tracking-[0.28em]"
+                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.85)' }}
+              >
+                <span className="h-2 w-2 bg-[#D4AF37]" />
+                {role}
+              </span>
+            )
+          )}
+        </motion.div>
+
+        {/* Quote + name */}
+        <motion.div variants={mobileItem} className="mt-7">
+          <p
+            className="text-[#F0E9E1] text-base italic leading-relaxed tracking-wide"
+            style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 16px rgba(0,0,0,0.9)' }}
+          >
+            &ldquo;Code is my craft. Impact is my goal.&rdquo;
+          </p>
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-[#E9C767] font-mono text-base">&lt; /&gt;</span>
+            <span
+              className="text-[#F0E9E1] text-base font-medium tracking-wide"
+              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.85)' }}
+            >
+              Bhavesh
+            </span>
+          </div>
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div variants={mobileItem} className="mt-8 flex flex-wrap gap-4">
+          <a
+            href="#projects"
+            className="inline-flex items-center gap-3 px-7 py-3 border border-[#E8DFD8]/40 bg-black/30 text-[#E8DFD8] font-mono text-xs uppercase tracking-[0.22em] rounded-sm backdrop-blur-md transition-colors"
+          >
+            Explore My Work
+            <FiArrowRight size={18} />
+          </a>
+          <a
+            href="/resume.pdf"
+            className="inline-flex items-center gap-3 px-7 py-3 border border-[#E8DFD8]/40 bg-black/30 text-[#E8DFD8] font-mono text-xs uppercase tracking-[0.22em] rounded-sm backdrop-blur-md transition-colors"
+          >
+            Download Resume
+            <FiDownload size={18} />
+          </a>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+export default function Hero() {
+  // Phones render the lightweight variant; tablets & desktop keep the full
+  // 117-frame scroll-scrubbed cinematic exactly as built.
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileHero /> : <DesktopHero />;
 }

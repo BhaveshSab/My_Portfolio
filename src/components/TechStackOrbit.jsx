@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TextShimmer } from './ui/text-shimmer';
+import useIsMobile from '../utils/useIsMobile';
+import useInViewOnce from '../utils/useInViewOnce';
 import {
   FiBox,
   FiCloud,
@@ -226,7 +228,7 @@ const prefersReducedMotion =
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export default function TechStackOrbit() {
+function DesktopTechStackOrbit() {
   const [rotation, setRotation] = useState(0);
   const [isPaused, setIsPaused] = useState(prefersReducedMotion);
   const [hoveredId, setHoveredId] = useState(null);
@@ -748,4 +750,260 @@ export default function TechStackOrbit() {
       </AnimatePresence>
     </section>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* MOBILE — the revolving orbit (320px cards scaled to ~90px on a      */
+/* phone) is unreadable and its continuous rotation + comet trails      */
+/* are wasted on touch. Phones get the same five categories as a        */
+/* vertical tappable list with the same detail modal. Desktop keeps     */
+/* the full orbit above, untouched.                                     */
+/* ------------------------------------------------------------------ */
+const mobileEase = [0.22, 1, 0.36, 1];
+
+// Mobile section header — same look as desktop, animated by the hardened
+// in-view hook (IO + scroll fallback) so it always appears.
+function MobileSkillHeader() {
+  const [ref, shown] = useInViewOnce();
+  return (
+    <div ref={ref} className="relative z-10 text-center mb-10 md:mb-12">
+      <motion.p
+        initial={{ opacity: 0, y: 18 }}
+        animate={shown ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6, ease: mobileEase }}
+        className="text-[#cbb59d] font-mono text-xs md:text-sm uppercase tracking-[0.5em] mb-3"
+      >
+        DOMAINS &amp; CORE COMPETENCIES
+      </motion.p>
+      <motion.h2
+        initial={{ opacity: 0, y: 26 }}
+        animate={shown ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.7, ease: mobileEase, delay: 0.08 }}
+        className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase"
+      >
+        <TextShimmer
+          className="[--base-gradient-color:#FFFDF4]"
+          baseGradient="linear-gradient(to right, #FFF2C9 0%, #F5D684 30%, #ECC45E 58%, #DFB149 80%, #CE9B37 100%)"
+        >
+          Technical Capabilities
+        </TextShimmer>
+        <span className="text-[#F2CD6F]">.</span>
+      </motion.h2>
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={shown ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.7, ease: mobileEase, delay: 0.18 }}
+        className="text-[#C0A68A] text-sm md:text-base mt-4 max-w-xl mx-auto"
+      >
+        Engineering scalable systems &amp; agentic AI — tap any category for detailed metrics.
+      </motion.p>
+    </div>
+  );
+}
+
+// One tappable category card — rises when it scrolls into view.
+function MobileSkillCard({ category, index, onOpen }) {
+  const [ref, shown] = useInViewOnce();
+  const CategoryIcon = category.categoryIcon;
+  return (
+    <motion.div
+      ref={ref}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open ${category.title} details`}
+      initial={{ opacity: 0, y: 24 }}
+      animate={shown ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, ease: mobileEase, delay: (index % 2) * 0.06 }}
+      onClick={() => onOpen(category)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen(category);
+        }
+      }}
+      className="group relative w-full rounded-2xl p-6 sm:p-7 bg-[#0d0a05] border border-[#D4AF37]/25 active:scale-[0.99] transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
+    >
+      {/* Gold gradient ring (resting) */}
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{
+          padding: '1.5px',
+          background:
+            'linear-gradient(135deg, rgba(212,175,55,0.55), rgba(96,84,72,0.18) 32%, rgba(203,181,157,0.28) 58%, rgba(212,175,55,0.45))',
+          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+        }}
+      />
+
+      {/* Top bar — category code + open arrow */}
+      <div className="relative flex items-center justify-between mb-3">
+        <span className="flex items-center gap-2 text-[10px] font-mono text-[#D4AF37] tracking-wider uppercase">
+          <CategoryIcon size={16} />
+          {category.code}
+        </span>
+        <span className="text-sm text-[#B8976B] group-active:text-[#E8DFD8] transition-colors">
+          ➔
+        </span>
+      </div>
+
+      <h3 className="relative text-xl sm:text-2xl font-bold text-[#E8DFD8] tracking-wide">
+        {category.title}
+      </h3>
+      <p className="relative mt-1 text-[13px] text-[#D4B88A] leading-snug">
+        {category.tagline}
+      </p>
+
+      {/* Skill badges */}
+      <div className="relative flex flex-wrap gap-2 mt-4">
+        {category.skills.map((skill) => {
+          const SkillIcon = SKILL_ICONS[skill];
+          return (
+            <span
+              key={skill}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111111] border border-[#605448]/40 text-[#E8DFD8] text-xs font-medium"
+            >
+              {SkillIcon && (
+                <SkillIcon size={14} style={{ color: BRAND_COLORS[skill] }} className="shrink-0" />
+              )}
+              {skill}
+            </span>
+          );
+        })}
+      </div>
+
+      {/* Footer metric */}
+      <p className="relative mt-4 pt-3 border-t border-[#605448]/30 text-[10px] font-mono text-[#D4AF37]">
+        {category.metrics}
+      </p>
+    </motion.div>
+  );
+}
+
+function MobileTechStackOrbit() {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  // Close modal on Escape
+  useEffect(() => {
+    if (!selectedCategory) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setSelectedCategory(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedCategory]);
+
+  return (
+    <section
+      id="skills"
+      className="relative w-full min-h-screen bg-black text-[#E8DFD8] flex flex-col items-center justify-center overflow-hidden py-20 px-5 md:px-12 font-sans tracking-wide select-none scroll-mt-24"
+    >
+      {/* Ambient Center Glow */}
+      <div className="absolute z-0 w-[650px] h-[650px] bg-[#D4AF37]/5 rounded-full blur-[160px] pointer-events-none" />
+
+      {/* Header — identical to the desktop section header */}
+      <MobileSkillHeader />
+
+      {/* Vertical card list — no orbit, no rotation, no comet trails */}
+      <div className="relative z-10 w-full max-w-2xl flex flex-col gap-5">
+        {SECTION_CARDS.map((category, index) => (
+          <MobileSkillCard
+            key={category.id}
+            category={category}
+            index={index}
+            onOpen={setSelectedCategory}
+          />
+        ))}
+      </div>
+
+      {/* Detail Modal — same as desktop */}
+      <AnimatePresence>
+        {selectedCategory && (
+          <div
+            className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            onClick={() => setSelectedCategory(null)}
+          >
+            <motion.div
+              key="modal"
+              variants={{
+                enter: {
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                  transition: { type: 'spring', stiffness: 300, damping: 26 },
+                },
+                exit: {
+                  opacity: 0,
+                  scale: 0.92,
+                  y: 16,
+                  transition: { duration: 0.18, ease: 'easeIn' },
+                },
+              }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate="enter"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-black border border-[#D4AF37]/60 rounded-2xl p-6 sm:p-8 shadow-[0_0_50px_rgba(212,175,55,0.2)] text-[#E8DFD8]"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className="absolute top-4 right-4 text-[#B8976B] hover:text-[#E8DFD8] text-xl font-mono p-2 transition-colors"
+                aria-label="Close details"
+              >
+                ✕
+              </button>
+
+              <span className="text-xs font-mono text-[#D4AF37] uppercase">{selectedCategory.code}</span>
+              <h3 className="text-2xl font-bold text-[#E8DFD8] mt-1">{selectedCategory.title}</h3>
+              <p className="text-xs text-[#B8976B] mt-1">{selectedCategory.tagline}</p>
+
+              <SkillDock skills={selectedCategory.skills} className="my-5" />
+
+              <div className="my-6">
+                <h4 className="text-xs font-mono text-[#B8976B] uppercase mb-2">Overview</h4>
+                <p className="text-sm text-[#E8DFD8] leading-relaxed">{selectedCategory.description}</p>
+              </div>
+
+              <div className="my-6">
+                <h4 className="text-xs font-mono text-[#B8976B] uppercase mb-2">Core Stack &amp; Technologies</h4>
+                <div className="flex flex-wrap gap-2">
+                  {selectedCategory.skills.map((skill, i) => {
+                    const SkillIcon = SKILL_ICONS[skill];
+                    return (
+                      <motion.span
+                        key={skill}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.06 + i * 0.04, duration: 0.25 }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111111] border border-[#D4AF37]/40 text-[#E8DFD8] text-xs font-medium"
+                      >
+                        {SkillIcon && (
+                          <SkillIcon size={14} style={{ color: BRAND_COLORS[skill] }} className="shrink-0" />
+                        )}
+                        {skill}
+                      </motion.span>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-[#111111] border border-[#605448]/40">
+                <span className="text-[10px] font-mono text-[#B8976B] uppercase block mb-1">
+                  Key Performance Metric
+                </span>
+                <span className="text-sm font-semibold text-[#D4AF37]">{selectedCategory.metrics}</span>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
+
+export default function TechStackOrbit() {
+  // Phones render a tappable list; desktop keeps the full revolving orbit.
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileTechStackOrbit /> : <DesktopTechStackOrbit />;
 }

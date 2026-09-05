@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import useIsMobile from '../utils/useIsMobile';
 
 /**
  * "Welcome to my Portfolio" — the laptop cinematic.
@@ -23,7 +24,7 @@ const frameUrl = (index) =>
     import.meta.url
   ).href;
 
-const FrameScrollAnimation = ({ frameCount = DEFAULT_FRAME_COUNT }) => {
+const DesktopFrame = ({ frameCount = DEFAULT_FRAME_COUNT }) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
@@ -232,4 +233,10 @@ const FrameScrollAnimation = ({ frameCount = DEFAULT_FRAME_COUNT }) => {
   );
 };
 
-export default FrameScrollAnimation;
+export default function FrameScrollAnimation(props) {
+  // Phones skip this cinematic entirely (removed per design) so the page
+  // flows Hero → About without a heavy section — desktop keeps the full
+  // 240-frame laptop sequence exactly as built.
+  const isMobile = useIsMobile();
+  return isMobile ? null : <DesktopFrame {...props} />;
+}
