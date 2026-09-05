@@ -90,8 +90,39 @@ const DesktopFrame = ({ frameCount = DEFAULT_FRAME_COUNT }) => {
     return () => unsubs.forEach((un) => un());
   }, [opacity, blur, headingOpacity, headingY]);
 
-  // Preloading — robust, StrictMode-safe, never hangs on failures
+  // Near-viewport flag: this cinematic sits ~300vh down the page (after the
+  // hero's scroll track), so preloading its 240 frames at page load wastes
+  // bandwidth and starves everything else (the hero frames, the Spline scene)
+  // for no benefit. Preloading starts only once the section approaches.
+  const [nearViewport, setNearViewport] = useState(false);
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    let done = false;
+    const check = () => {
+      if (done) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      if (r.top < vh * 1.5 && r.bottom > -vh) {
+        done = true;
+        setNearViewport(true);
+        window.removeEventListener('scroll', check);
+        window.removeEventListener('resize', check);
+      }
+    };
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    check();
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, []);
+
+  // Preloading — robust, StrictMode-safe, never hangs on failures; starts
+  // only when the section is near the viewport.
+  useEffect(() => {
+    if (!nearViewport) return;
     let cancelled = false;
     let loadedCount = 0;
     images.current = [];
@@ -113,7 +144,7 @@ const DesktopFrame = ({ frameCount = DEFAULT_FRAME_COUNT }) => {
     return () => {
       cancelled = true;
     };
-  }, [frameCount]);
+  }, [frameCount, nearViewport]);
 
   // Canvas rendering — redraw whenever the scrubbed frame changes
   useEffect(() => {

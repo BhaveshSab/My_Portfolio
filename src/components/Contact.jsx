@@ -90,11 +90,20 @@ const Contact = () => {
               WebGL iframe entirely and get the full-width form. */}
           {!isMobile && (
           <div className="relative h-[70vh] overflow-hidden lg:h-auto">
-            {/* Plain, always-visible iframe: no IntersectionObserver-gated
-                opacity fade (that left the panel blank until a scroll event
-                fired in throttled/embedded views) and no lazy loading (the
-                browser deferred the heavy WebGL scene on refresh, showing an
-                empty panel). It mounts visible and loads immediately. */}
+            {/* Backdrop shown until the Spline document paints, so the panel
+                never reads as a broken black void while the scene loads. */}
+            <div className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center">
+              <span className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.35em] text-[#D9C08F]/60">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#D4AF37]" />
+                Syncing_3D_Module
+              </span>
+            </div>
+            {/* Always-visible, eager iframe: no IntersectionObserver-gated
+                opacity fade and no loading="lazy" — lazy-loading is itself
+                IO-driven, and in throttled/embedded views those callbacks can
+                starve so the scene never starts. Eager + visible + the
+                browser-cached URL means it begins loading immediately on page
+                load and is instant on refresh. */}
             <iframe
               src={SPLINE_ROBOT_URL}
               frameBorder="0"

@@ -243,13 +243,43 @@ function DesktopTechStackOrbit() {
   const rotationRef = useRef(0);
   const lastTickRef = useRef(0);
   const RAD_PER_MS = 0.00012; // 0.12 rad/s — matches the old ~0.002 rad/frame @ 60fps
+  // Whether the orbit stage is currently on screen. When the user is elsewhere
+  // (scrolled to the hero or the contact section) the 60fps rotation loop must
+  // not keep re-rendering this whole subtree in the background — that starves
+  // the main thread and delays other content (e.g. the Spline scene) from
+  // loading. Off-screen ticks just keep the clock current so resuming never
+  // jumps.
+  const stageVisibleRef = useRef(true);
+  useEffect(() => {
+    const check = () => {
+      const el = stageRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      stageVisibleRef.current = r.bottom > 0 && r.top < vh;
+    };
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, []);
 
   // Smooth continuous rotation loop (linear easing — constant-rate motion).
   // Keeps revolving at all times EXCEPT while the cursor is resting on a card
-  // (hoveredId set), a modal is open, or the user paused it manually.
+  // (hoveredId set), a modal is open, the user paused it manually, or the
+  // orbit is off screen.
   useEffect(() => {
     lastTickRef.current = performance.now();
     const tick = () => {
+      if (!stageVisibleRef.current) {
+        // Off screen: keep the clock current so resuming never jumps, but do
+        // not re-render.
+        lastTickRef.current = performance.now();
+        return;
+      }
       if (!isPaused && !hoveredId && !selectedCategory) {
         const now = performance.now();
         const dt = Math.max(0, Math.min(now - lastTickRef.current, 250));
