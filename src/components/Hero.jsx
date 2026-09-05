@@ -314,9 +314,20 @@ function DesktopHero() {
           }}
         />
 
-        {/* Legibility scrim — darkens behind the copy so text always pops */}
-        <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 z-20 h-48 pointer-events-none bg-gradient-to-t from-black/70 to-transparent" />
+        {/* Legibility scrim — hugs the LEFT copy column (brand / title / roles
+            / CTAs) and fades out across the open middle of the frame instead
+            of sweeping the full width, so the subject's face is not shaded.
+            Text keeps its backing from this band plus its own drop-shadows. */}
+        <div
+          className="absolute inset-y-0 left-0 z-20 w-[62%] pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.6) 24%, rgba(0,0,0,0.34) 48%, rgba(0,0,0,0.08) 78%, rgba(0,0,0,0) 100%)',
+          }}
+        />
+        {/* Bottom fade — shortened so it only cushions the bottom CTAs, not the
+            lower-middle of the subject */}
+        <div className="absolute inset-x-0 bottom-0 z-20 h-32 pointer-events-none bg-gradient-to-t from-black/60 to-transparent" />
 
         {/* Right-edge melt — the frame's right boundary dissolves into the
             black canvas instead of stopping on a hard edge */}
@@ -325,18 +336,6 @@ function DesktopHero() {
           style={{
             background:
               'linear-gradient(to left, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.18) 45%, transparent 100%)',
-          }}
-        />
-
-        {/* Right-column scrim — the quote/name sit over the side of the frame
-            that the left-to-right scrim above deliberately leaves untouched.
-            Kept light (the edge vignette already contributes) so it gives the
-            copy something to read against without banding the frame edge. */}
-        <div
-          className="absolute inset-y-0 right-0 z-20 w-[38%] md:w-[30%] pointer-events-none"
-          style={{
-            background:
-              'linear-gradient(to left, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.2) 55%, transparent 100%)',
           }}
         />
 
@@ -532,9 +531,10 @@ function MobileHero() {
           className="h-full w-full object-cover"
           loading="eager"
         />
-        {/* Legibility scrims — same layering as the desktop hero */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
+        {/* Legibility scrims — lightened so the portrait subject stays visible
+            on phones (the copy carries its own drop-shadows) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/10" />
       </div>
 
       {/* Cinematic vignette */}

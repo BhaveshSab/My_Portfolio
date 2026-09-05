@@ -28,11 +28,13 @@ import useIsMobile from '../utils/useIsMobile';
 const CONTACT_API_URL = import.meta.env.VITE_CONTACT_API_URL || '/api/contact';
 
 // Spline 3D robot — cursor-following companion for the landing page.
-// The ?v= query is a cache-buster: Spline publishes scene updates at the SAME
-// URL, and browsers cache the iframe document — without it you keep seeing the
-// stale (pink) revision instead of the latest (yellow) one published in Spline.
+// No ?v= cache-buster on purpose: the query forced the browser to re-download
+// the whole heavy WebGL scene on every refresh, which is exactly what made the
+// panel look empty after a reload. Without it the scene is cached, so refreshes
+// load it instantly. (If you re-publish a changed scene in Spline and want to
+// force one fresh download, bump a ?v= query here once.)
 const SPLINE_ROBOT_URL =
-  'https://my.spline.design/robotfollowcursorforlandingpage-qw3YR8iZDtZ6IfsnPfSOhSqE/?v=4';
+  'https://my.spline.design/robotfollowcursorforlandingpage-qw3YR8iZDtZ6IfsnPfSOhSqE/';
 
 const FIELD_CLASS =
   'w-full rounded-md border border-[#8C6D4F]/70 bg-white/[0.04] px-4 py-3 text-sm text-[#F2EAE0] outline-none transition-all duration-300 placeholder:text-[#C9A879]/80 focus:border-[#F2D26B] focus:bg-[#D4AF37]/[0.05] focus:shadow-[0_0_0_3px_rgba(212,175,55,0.12)]';
@@ -88,18 +90,17 @@ const Contact = () => {
               WebGL iframe entirely and get the full-width form. */}
           {!isMobile && (
           <div className="relative h-[70vh] overflow-hidden lg:h-auto">
-            <motion.iframe
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.9, ease: 'easeOut' }}
-              key={SPLINE_ROBOT_URL}
+            {/* Plain, always-visible iframe: no IntersectionObserver-gated
+                opacity fade (that left the panel blank until a scroll event
+                fired in throttled/embedded views) and no lazy loading (the
+                browser deferred the heavy WebGL scene on refresh, showing an
+                empty panel). It mounts visible and loads immediately. */}
+            <iframe
               src={SPLINE_ROBOT_URL}
               frameBorder="0"
               title="3D robot companion — follows your cursor"
               width="100%"
               height="100%"
-              loading="lazy"
               className="absolute inset-0 h-full w-full"
               style={{ transform: 'scale(1.15)' }}
             />
