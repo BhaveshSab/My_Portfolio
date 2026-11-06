@@ -1,150 +1,298 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { TextShimmer } from './ui/text-shimmer';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { FiArrowUpRight } from 'react-icons/fi';
 
-// Education & milestone timeline data (verified resume details)
-const MILESTONES = [
+/**
+ * EXPERIENCE & EDUCATION — scroll timeline with a sticky year rail.
+ *
+ * Layout follows the reference: a pinned left column ("My story", "Let's go
+ * back in time.", the oversized year, the active date range and a 3-of-6
+ * counter) beside a hairline rule carrying one block per role, newest first.
+ * As the page scrolls the big year, the date range and the counter follow the
+ * block currently crossing the reading line.
+ *
+ * Colours and type stay in this site's language — black canvas, #F3EDE2
+ * headings, #CBB59D secondary, gold accent — rather than the reference's cream.
+ * To flip the block to that light system, swap:
+ *   bg-black            -> bg-[#e8e4e0]
+ *   text-[#F3EDE2]      -> text-[#1a1818]
+ *   text-[#CBB59D]      -> text-[#6f6966]
+ *   border-[#CBB59D]/20 -> border-[#e5e7eb]
+ *   bg-[#D4AF37]        -> bg-[#1a1818]
+ */
+
+const ITEMS = [
   {
-    id: 'oracle-hackerrank',
-    date: 'JULY 2026',
-    title: 'Oracle & HackerRank Certified',
-    company: 'Oracle & HackerRank',
-    description:
-      'Earned the Oracle Agentic AI Certified Foundations Associate certification and HackerRank SQL (Advanced) certification.',
+    id: 'kagnus',
+    year: '2026',
+    date: 'OCT 2026 – NOV 2026',
+    title: 'Full stack developer intern',
+    org: 'Kagnus Engineering Network · Remote',
+    points: [
+      'Built VendorBridge, a procurement ERP covering RFQs, approvals, purchase orders and invoices, with 40+ REST endpoints and 4 role-based tiers.',
+      'Made approvals race-safe with row locks and an append-only audit log, backed by 400+ automated tests.',
+    ],
+    links: [
+      { label: 'VendorBridge repo', href: 'https://github.com/BhaveshSab/VendorBridge-kagnus' },
+      { label: 'Live demo', href: 'https://vendor-bridge-kagnus.vercel.app' },
+    ],
   },
   {
-    id: 'nptel-cpp',
-    date: 'JULY 2026',
-    title: 'Elite C++ Topper (Top 5%)',
-    company: 'NPTEL & IIT',
-    description:
-      'Completed the 12-week Programming in Modern C++ course, recognized as an Elite Topper in the Top 5% out of 26,183 candidates.',
+    id: 'redis',
+    year: '2026',
+    date: 'JUL 2026 – AUG 2026',
+    title: 'Certified in Redis and agentic AI',
+    org: 'Redis · Oracle',
+    points: [
+      'Redis Associate Developer, scored 92%.',
+      'Oracle Agentic AI Certified Foundations Associate.',
+    ],
   },
   {
-    id: 'sih-ignite',
-    date: 'HACKATHON & VENTURE',
-    title: 'SIH Top Tier & Ignite India',
-    company: 'Smart India Hackathon & Wadhwani Foundation',
-    description:
-      'Selected for the SIH College Internal Round, ranking in the top tier out of 100+ competing teams. Certified Practice Venture under Ignite India for entrepreneurial excellence.',
+    id: 'assetflow',
+    year: '2026',
+    date: 'JUL 2026 – NOV 2026',
+    title: 'AssetFlow',
+    org: 'Asset and resource management ERP · Self-hosted',
+    points: [
+      'Built a 13-screen React app on a NestJS backend with 79 REST endpoints and role-based access across 4 roles.',
+      'Deployed it on AWS EC2 with Docker, Nginx, Prometheus and Grafana, with nightly encrypted backups to S3.',
+    ],
+    links: [
+      { label: 'Source', href: 'https://github.com/BhaveshSab/assetflow' },
+      { label: 'Live demo', href: 'https://odoohackathon-ujkn.vercel.app' },
+    ],
+  },
+  {
+    id: 'nptel',
+    year: '2025',
+    date: '2025',
+    title: 'C++ Elite',
+    org: 'NPTEL · IIT Kharagpur',
+    points: [
+      'Completed Programming in Modern C++ in the top 5% of 26,183.',
+      'Built the data structures base behind 250+ LeetCode problems solved so far.',
+    ],
   },
   {
     id: 'btech',
-    date: 'AUG 2024 - MAY 2028',
-    title: 'B.Tech Electrical Engineering',
-    company: 'Punjab Engineering College (PEC), Chandigarh',
-    description:
-      'Pursuing B.Tech with a 7.69/10 GPA. Secured admission with a JEE Mains 98.04 Percentile (out of 1.6M+ candidates).',
+    year: '2024',
+    date: 'AUG 2024 – NOW',
+    title: 'B.Tech, Electrical Engineering',
+    org: 'Punjab Engineering College (PEC), Chandigarh',
+    points: [
+      'Cleared JEE Mains at the 98.04 percentile among 1.6M+ candidates.',
+      'GPA 7.69/10, graduating May 2028.',
+    ],
   },
   {
-    id: 'class-xii',
-    date: '2022 - 2023',
-    title: 'Class XII (Senior Secondary)',
-    company: 'Jai Durga Senior Sec School, Jaipur',
-    description:
-      'Completed RBSE Class 12th Board examinations with an 87% overall aggregate and 90% in PCME (Physics, Chemistry, Math, English).',
-  },
-  {
-    id: 'class-x',
-    date: '2020 - 2021',
-    title: 'Class X (Secondary)',
-    company: 'RBSE Board, Jaipur',
-    description:
-      'Completed RBSE Class 10th Secondary Board examinations with a 92% overall aggregate.',
+    id: 'school',
+    year: '2023',
+    date: '2021 – 2023',
+    title: 'Class XII',
+    org: 'RBSE Board, Jaipur',
+    points: ['Scored 87%, with 90% in PCM and English.', 'Class X in 2021: 92%.'],
   },
 ];
 
+function TimelineItem({ item, index, isActive, registerRef }) {
+  return (
+    <motion.article
+      ref={registerRef}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.55, delay: (index % 3) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative pl-8 sm:pl-12"
+    >
+      {/* node on the rule */}
+      <span
+        aria-hidden
+        className={`absolute left-0 top-[7px] h-[7px] w-[7px] transition-all duration-300 ${
+          isActive
+            ? 'scale-125 bg-[#D4AF37] shadow-[0_0_12px_rgba(212,175,55,0.9)]'
+            : 'bg-[#D4AF37]/60 group-hover:scale-125 group-hover:bg-[#D4AF37]'
+        }`}
+      />
+
+      <p className="font-mono text-[12px] uppercase tracking-widest text-[#CBB59D]">{item.date}</p>
+
+      <h3 className="mt-2 text-[24px] font-semibold leading-tight tracking-tight text-[#F3EDE2] sm:text-[28px] md:text-[34px]">
+        {item.title}
+      </h3>
+
+      <p className="mb-4 mt-1 font-mono text-[12px] uppercase tracking-widest text-[#CBB59D]">
+        {item.org}
+      </p>
+
+      <ul className="max-w-2xl space-y-2">
+        {item.points.map((point) => (
+          <li key={point} className="flex gap-2.5 text-[16px] leading-relaxed text-[#CBB59D]">
+            <span aria-hidden className="text-[#D4AF37]/70">
+              –
+            </span>
+            <span>{point}</span>
+          </li>
+        ))}
+      </ul>
+
+      {item.links && (
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+          {item.links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-[12px] font-medium uppercase tracking-widest text-[#F3EDE2] transition-opacity duration-300 hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-4 focus-visible:ring-offset-black"
+            >
+              {link.label}
+              <FiArrowUpRight aria-hidden />
+            </a>
+          ))}
+        </div>
+      )}
+    </motion.article>
+  );
+}
+
 export default function EducationMilestonesTimeline() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const itemRefs = useRef([]);
+  const prefersReducedMotion = useReducedMotion();
+
+  // The block whose top has most recently crossed the reading line wins.
+  useEffect(() => {
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const line = window.innerHeight * 0.42;
+      let next = 0;
+      itemRefs.current.forEach((node, index) => {
+        if (!node) return;
+        if (node.getBoundingClientRect().top <= line) next = index;
+      });
+      setActiveIndex((current) => (current === next ? current : next));
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const active = ITEMS[activeIndex] ?? ITEMS[0];
+  const counter = `${String(activeIndex + 1).padStart(2, '0')} / ${String(ITEMS.length).padStart(2, '0')}`;
+  const progress = ((activeIndex + 1) / ITEMS.length) * 100;
+
   return (
     <section
       id="experience"
-      className="relative w-full bg-black text-[#E8DFD8] py-24 md:py-32 px-6 md:px-16 overflow-hidden select-none scroll-mt-24 font-sans tracking-wide"
+      className="relative w-full bg-black px-6 py-24 font-sans text-[#E8DFD8] scroll-mt-28 md:px-16 md:py-32"
     >
-      {/* Ambient golden glows */}
-      <div className="absolute -top-48 -left-40 w-[620px] h-[620px] bg-[#D4AF37]/[0.05] rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute top-1/3 -right-24 w-[480px] h-[640px] bg-[#D4AF37]/[0.03] rounded-full blur-[170px] pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-[420px] h-[300px] bg-[#D4AF37]/[0.03] rounded-full blur-[140px] pointer-events-none" />
-      <div className="relative z-10 max-w-5xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -18 }}
+      {/* ambient gold — clipped on its own layer so the sticky rail still works */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-40 -top-48 h-[620px] w-[620px] rounded-full bg-[#D4AF37]/[0.05] blur-[150px]" />
+        <div className="absolute -right-24 top-1/3 h-[640px] w-[480px] rounded-full bg-[#D4AF37]/[0.03] blur-[170px]" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1440px]">
+        {/* ---------- header ---------- */}
+        <motion.header
+          initial={{ opacity: 0, y: -16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="mb-16 md:mb-24"
+          className="mb-10 max-w-3xl md:mb-14"
         >
-          <div className="flex items-center gap-4 mb-5">
-            <span className="text-[#D4AF37] font-mono text-xs md:text-sm tracking-[0.4em] uppercase">
-              04 / MILESTONES
-            </span>
-            <div className="h-[1px] w-14 bg-[#D4AF37]/50" />
-          </div>
-          <h2 className="text-[38px] sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase leading-[1.02] tracking-tighter drop-shadow-[0_0_24px_rgba(212,175,55,0.25)]">
-            <TextShimmer
-              className="whitespace-pre-line [--base-gradient-color:#FFFFFF]"
-              duration={3}
-              baseGradient="linear-gradient(to bottom, #FFFFFF 0%, #FFFFFF 49%, #FCE9BC 50%, #F0CC7E 74%, #CFA250 100%)"
-            >
-              {'Education &\nAchievements.'}
-            </TextShimmer>
-          </h2>
-          <p className="text-[#E8D2A9] text-[15px] md:text-[17px] mt-5 max-w-2xl font-normal leading-relaxed">
-            Certifications, competitive achievements, and the academic journey that shaped my
-            engineering fundamentals.
+          <p className="mb-4 font-mono text-[12px] uppercase tracking-widest text-[#CBB59D]">
+            04 / Experience &amp; Education
           </p>
-        </motion.div>
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Glowing line — draws itself down as the section scrolls into view */}
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            whileInView={{ height: '100%', opacity: 1 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 1.8, ease: 'easeInOut' }}
-            className="absolute left-[5px] md:left-[209px] lg:left-[237px] top-0 w-[2px] origin-top bg-gradient-to-b from-[#F2D06B] via-[#D4AF37]/70 to-transparent shadow-[0_0_14px_rgba(212,175,55,0.6)] rounded-full"
-          />
-          {/* Soft wider halo behind the core line */}
-          <div className="absolute left-[3px] md:left-[207px] lg:left-[235px] top-0 bottom-0 w-[6px] bg-[#D4AF37]/[0.06] blur-[3px] rounded-full pointer-events-none" />
+          <h2 className="max-w-[13ch] text-[clamp(2.5rem,6vw,5rem)] font-bold leading-[0.95] tracking-[-1.5px] text-[#F3EDE2] [text-wrap:balance]">
+            <span className="block">EXPERIENCE</span>
+            <span className="block">
+              &amp; EDUCATION<span className="text-[#D4AF37]">.</span>
+            </span>
+          </h2>
 
-          <div className="flex flex-col gap-14 md:gap-16">
-            {MILESTONES.map((item, index) => (
-              <motion.article
-                key={item.id}
-                initial={{ opacity: 0, y: 34 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-70px' }}
-                transition={{ duration: 0.6, delay: (index % 3) * 0.08 }}
-                className="relative pl-11 md:pl-0 md:flex md:items-start group"
+          <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-[#CBB59D] md:text-[17px]">
+            Where I have worked, what I have shipped, and the foundation underneath it.
+          </p>
+        </motion.header>
+
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-20 xl:gap-24">
+          {/* ---------- pinned year rail ---------- */}
+          <div className="lg:sticky lg:top-24 lg:flex lg:h-[calc(100vh-9rem)] lg:flex-col lg:justify-center lg:self-start">
+            <p className="mb-4 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-widest text-[#CBB59D]">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#D4AF37]" />
+              My story
+            </p>
+
+            <h3 className="text-[clamp(1.6rem,2.6vw,2.35rem)] font-bold leading-tight tracking-[-1px] text-[#F3EDE2]">
+              Let&rsquo;s go back in time.
+            </h3>
+
+            {/* big year — swaps as the active block changes */}
+            <div className="mt-2 overflow-hidden">
+              <motion.span
+                key={`${active.id}-${active.year}`}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                className="block text-[clamp(5.5rem,14vw,11rem)] font-bold leading-[0.82] tracking-[-0.06em] text-[#F3EDE2]"
               >
-                {/* Date (left of the line on desktop, above title on mobile) —
-                    the gutter is sized to the longest labels ("AUG 2024 - MAY 2028",
-                    "HACKATHON & VENTURE") so they stay on one line at the larger size */}
-                <div className="md:w-[208px] lg:w-[236px] md:shrink-0 md:text-right md:pr-7 lg:pr-8 mb-2 md:mb-0 md:pt-px">
-                  <span className="inline-block font-mono text-[12px] lg:text-[13px] font-medium tracking-[0.12em] uppercase text-[#D8B678] group-hover:text-[#F2D06B] transition-colors duration-300">
-                    {item.date}
-                  </span>
-                </div>
+                {active.year}
+              </motion.span>
+            </div>
 
-                {/* Hollow node on the line */}
-                <div className="absolute left-[0px] md:left-[203px] lg:left-[231px] top-[6px] w-[13px] h-[13px] rounded-full border-2 border-[#D4AF37] bg-black z-10 transition-all duration-300 group-hover:bg-[#D4AF37] group-hover:shadow-[0_0_14px_rgba(212,175,55,0.95)]">
-                  <span className="absolute inset-[3px] rounded-full bg-[#D4AF37]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
+            <p className="mt-8 font-mono text-[12px] uppercase tracking-[0.2em] text-[#CBB59D]">
+              {active.date}
+            </p>
 
-                {/* Content (right of the line) — clear of the node & line */}
-                <div className="flex-1 md:pl-9 lg:pl-11">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-black uppercase text-[#E8DFD8] tracking-tight leading-snug group-hover:text-white transition-colors duration-300">
-                    {item.title}
-                  </h3>
-                  <h4 className="mt-1 font-mono text-[11px] md:text-[12px] tracking-[0.28em] uppercase text-[#D4AF37]/90 group-hover:text-[#D4AF37] transition-colors duration-300">
-                    {item.company}
-                  </h4>
-                  <p className="mt-3 text-[15px] md:text-base lg:text-[17px] leading-relaxed font-normal text-[#CDB496] group-hover:text-[#DCC7AB] transition-colors duration-300 max-w-2xl">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.article>
-            ))}
+            <div className="mt-4 flex items-center gap-4">
+              <span className="font-mono text-[11px] tabular-nums tracking-[0.2em] text-[#CBB59D]">
+                {counter}
+              </span>
+              <span aria-hidden className="block h-px w-24 bg-[#CBB59D]/25">
+                <span
+                  className="block h-px bg-[#D4AF37] transition-[width] duration-500 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </span>
+            </div>
+          </div>
+
+          {/* ---------- timeline ---------- */}
+          <div className="relative">
+            {/* 1px rule; sits closer to the edge on small screens */}
+            <div
+              aria-hidden
+              className="absolute bottom-0 left-[3px] top-2 w-px bg-gradient-to-b from-[#CBB59D]/40 via-[#CBB59D]/20 to-transparent"
+            />
+
+            <div className="flex flex-col gap-14 md:gap-20">
+              {ITEMS.map((item, index) => (
+                <TimelineItem
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  isActive={index === activeIndex}
+                  registerRef={(node) => {
+                    itemRefs.current[index] = node;
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

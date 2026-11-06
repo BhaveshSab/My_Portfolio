@@ -92,7 +92,7 @@ const DesktopFrame = ({ frameCount = DEFAULT_FRAME_COUNT }) => {
 
   // Near-viewport flag: this cinematic sits ~300vh down the page (after the
   // hero's scroll track), so preloading its 240 frames at page load wastes
-  // bandwidth and starves everything else (the hero frames, the Spline scene)
+  // bandwidth and starves everything else (the hero frames, the laptop frames)
   // for no benefit. Preloading starts only once the section approaches.
   const [nearViewport, setNearViewport] = useState(false);
   useEffect(() => {

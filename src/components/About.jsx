@@ -167,7 +167,7 @@ export default function About() {
     {
       icon: <FiCode size={28} />,
       title: 'Languages',
-      desc: 'C++, Python, JavaScript, TypeScript',
+      desc: 'C++, JavaScript, TypeScript, Python, SQL',
     },
     {
       icon: <FiBookOpen size={28} />,
@@ -177,14 +177,15 @@ export default function About() {
     {
       icon: <FiLayers size={28} />,
       title: 'Projects',
-      desc: 'AssetFlow ERP · InstaDev · OpenClaw AI platform',
+      desc: 'VendorBridge ERP · AssetFlow ERP · Smart Grid Telemetry',
     },
     {
       icon: <FiAward size={28} />,
       title: 'Achievements',
-      desc: 'SIH internal round · Oracle Agentic AI certified · C++ Elite Topper (Top 5% of 26k+)',
+      desc: 'Redis Associate Developer (92%) · NPTEL C++ Elite Topper (Top 5% of 26,183) · 250+ LeetCode solved',
     },
   ];
+
 
   return (
     <div
@@ -311,26 +312,29 @@ export default function About() {
 
           {/* Bio Paragraphs — each rises as it scrolls in */}
           <Rise as="p" delay={0.05} className="text-[#E8DFD8] text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed max-w-2xl">
-            I'm a results-driven <span className="text-[#D4AF37] font-semibold">Software Engineer</span>{' '}
+            I&rsquo;m a results-driven <span className="text-[#D4AF37] font-semibold">Software Engineer</span>{' '}
             who{' '}
             <span className="text-[#D4AF37] font-semibold">
-              engineers scalable systems and agentic AI
+              engineers scalable systems and accessible interfaces
             </span>{' '}
-            — spanning high-concurrency backends, modern full-stack interfaces, and autonomous LLM
+            — spanning high-concurrency backends, modern full-stack front ends, and autonomous LLM
             orchestration. I build secure, high-performance web systems with{' '}
-            <span className="text-[#cbb59d] font-medium">Next.js</span>,{' '}
-            <span className="text-[#cbb59d] font-medium">Express.js</span>,{' '}
-            <span className="text-[#cbb59d] font-medium">WebSockets</span>, and{' '}
-            <span className="text-[#cbb59d] font-medium">AWS</span> cloud-native architecture, and I
-            architect privacy-first B2B systems that balance absolute user privacy with real-time
-            alerting.
+            <span className="text-[#cbb59d] font-medium">React</span>,{' '}
+            <span className="text-[#cbb59d] font-medium">TypeScript</span>,{' '}
+            <span className="text-[#cbb59d] font-medium">NestJS</span> and{' '}
+            <span className="text-[#cbb59d] font-medium">PostgreSQL</span>, ship them on{' '}
+            <span className="text-[#cbb59d] font-medium">AWS</span> with Docker, Nginx and Prometheus,
+            and keep them correct under concurrency with row locks, triggers and role-based access
+            control.
           </Rise>
           <Rise as="p" delay={0.1} className="text-[#E8DFD8] text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed max-w-2xl">
-            Strong DSA and OOPs fundamentals —{' '}
-            <span className="text-[#D4AF37] font-semibold">200+ LeetCode problems solved</span> — keep
-            my code clean and highly optimized. Currently pursuing my B.Tech in Electrical Engineering
-            at Punjab Engineering College, Chandigarh (GPA 7.69/10), with a JEE Mains score in the 98.04
-            percentile.
+            Strong DSA and OOP fundamentals —{' '}
+            <span className="text-[#D4AF37] font-semibold">250+ LeetCode problems solved</span> — keep
+            my code clean and highly optimized. Most recently a{' '}
+            <span className="text-[#D4AF37] font-semibold">Full Stack Developer Intern at Kagnus</span>{' '}
+            Engineering Network (remote), where I built the VendorBridge procurement ERP. Currently
+            pursuing my B.Tech in Electrical Engineering at Punjab Engineering College, Chandigarh (GPA
+            7.69/10), admitted with a JEE Mains score in the 98.04 percentile.
           </Rise>
 
           {/* Cards Grid — each card springs up the moment it scrolls in */}

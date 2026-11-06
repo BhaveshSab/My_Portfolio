@@ -23,6 +23,11 @@ import {
   SiTypescript,
   SiReact,
   SiNextdotjs,
+  SiNestjs,
+  SiRadixui,
+  SiScikitlearn,
+  SiStreamlit,
+  SiMqtt,
   SiTailwindcss,
   SiRedux,
   SiFramer,
@@ -51,7 +56,7 @@ const SECTION_CARDS = [
     tagline: 'Algorithmic Problem Solving & Type Safety',
     categoryIcon: FiCode,
     skills: ['C++', 'Python', 'JavaScript', 'TypeScript', 'DSA', 'OOPs'],
-    metrics: '200+ LeetCode Solved | Elite NPTEL C++ (Top 5%)',
+    metrics: '250+ LeetCode Solved | Elite NPTEL C++ (Top 5%)',
     description:
       'Expertise in low-level memory handling, algorithm design, asynchronous paradigms, and strict full-stack type safety.',
   },
@@ -61,7 +66,7 @@ const SECTION_CARDS = [
     title: 'Frontend Ecosystem',
     tagline: 'Reactive UI & Performant Web Apps',
     categoryIcon: FiLayout,
-    skills: ['React.js', 'Next.js', 'Redux Toolkit', 'Tailwind CSS', 'Framer Motion', 'shadcn/ui'],
+    skills: ['React.js', 'TypeScript', 'Radix UI', 'Tailwind CSS', 'Framer Motion', 'shadcn/ui'],
     metrics: 'SSR / SSG Architecture | Dynamic Layout Animations',
     description:
       'Building modular glassmorphic component systems, state management feeds, and fluid interactive animations.',
@@ -72,7 +77,7 @@ const SECTION_CARDS = [
     title: 'Backend & Systems',
     tagline: 'Scalable Microservices & Real-Time APIs',
     categoryIcon: FiServer,
-    skills: ['Node.js', 'Express.js', 'WebSockets', 'REST APIs', 'JWT Auth', 'Redis'],
+    skills: ['Node.js', 'NestJS', 'Express.js', 'REST APIs', 'JWT Auth', 'Redis'],
     metrics: 'Concurrency Locking | Row-Level Transactional Safety',
     description:
       'Architecting RESTful endpoints, real-time bi-directional socket pipelines, and secure stateless token authentication.',
@@ -83,8 +88,8 @@ const SECTION_CARDS = [
     title: 'Database & Cloud',
     tagline: 'Relational Schemas & Container Deployments',
     categoryIcon: FiDatabase,
-    skills: ['PostgreSQL', 'MongoDB', 'Prisma ORM', 'Advanced SQL', 'AWS (EC2/SES)', 'Docker'],
-    metrics: '13-Table Relational Schema | Multi-Tenant RBAC',
+    skills: ['PostgreSQL', 'MongoDB', 'Prisma ORM', 'Advanced SQL', 'AWS (EC2/S3)', 'Docker'],
+    metrics: '18-Table Procurement Schema | 13-Model Asset Schema',
     description:
       'ACID-compliant relational database modeling, NoSQL document indexing, Dockerized isolation, and AWS cloud compute.',
   },
@@ -94,10 +99,10 @@ const SECTION_CARDS = [
     title: 'AI & Developer Tools',
     tagline: 'Automations & Multi-Model Workflows',
     categoryIcon: FiZap,
-    skills: ['Google Antigravity', 'n8n Workflows', 'LLM Integration', 'Postman', 'Git & GitHub', 'Vercel'],
-    metrics: 'Autonomous AI Agents | Self-Hosted Node Pipelines',
+    skills: ['Scikit-learn', 'Streamlit', 'MQTT / ESP32', 'n8n Workflows', 'Postman', 'Git & GitHub'],
+    metrics: 'Isolation Forest Anomalies | 11 Alert Rules',
     description:
-      'Leveraging agentic developer workflows, continuous integration pipelines, and custom AI execution environments.',
+      'Streaming ESP32 telemetry into Python anomaly-detection pipelines, alongside self-hosted automation and CI workflows.',
   },
 ];
 
@@ -125,9 +130,14 @@ const SKILL_ICONS = {
   MongoDB: SiMongodb,
   'Prisma ORM': SiPrisma,
   'Advanced SQL': FiDatabase,
-  'AWS (EC2/SES)': FiCloud,
+  'AWS (EC2/S3)': FiCloud,
   Docker: SiDocker,
   'Google Antigravity': SiGoogle,
+  NestJS: SiNestjs,
+  'Radix UI': SiRadixui,
+  'Scikit-learn': SiScikitlearn,
+  Streamlit: SiStreamlit,
+  'MQTT / ESP32': SiMqtt,
   'n8n Workflows': SiN8N,
   'LLM Integration': FiZap,
   Postman: SiPostman,
@@ -155,9 +165,14 @@ const BRAND_COLORS = {
   PostgreSQL: '#4169E1',
   MongoDB: '#47A248',
   'Prisma ORM': '#E8DFD8',
-  'AWS (EC2/SES)': '#FF9900',
+  'AWS (EC2/S3)': '#FF9900',
   Docker: '#2496ED',
   'Google Antigravity': '#4285F4',
+  NestJS: '#E0234E',
+  'Radix UI': '#E8DFD8',
+  'Scikit-learn': '#F7931E',
+  Streamlit: '#FF4B4B',
+  'MQTT / ESP32': '#B07BB0',
   'n8n Workflows': '#EA4B71',
   Postman: '#FF6C37',
   'Git & GitHub': '#F05032',
@@ -246,7 +261,7 @@ function DesktopTechStackOrbit() {
   // Whether the orbit stage is currently on screen. When the user is elsewhere
   // (scrolled to the hero or the contact section) the 60fps rotation loop must
   // not keep re-rendering this whole subtree in the background — that starves
-  // the main thread and delays other content (e.g. the Spline scene) from
+  // the main thread and delays other content (e.g. the contact panel) from
   // loading. Off-screen ticks just keep the clock current so resuming never
   // jumps.
   const stageVisibleRef = useRef(true);

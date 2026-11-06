@@ -377,7 +377,7 @@ function DesktopHero() {
                 shipping high-concurrency{' '}
                 <span className="font-medium text-[#E9C767]">Node.js &amp; NestJS</span>{' '}
                 backends, fluid{' '}
-                <span className="font-medium text-[#E9C767]">React &amp; Next.js</span>{' '}
+                <span className="font-medium text-[#E9C767]">React &amp; TypeScript</span>{' '}
                 interfaces, and autonomous{' '}
                 <span className="font-medium text-[#E9C767]">LLM orchestration</span>{' '}
                 pipelines &mdash; secure, real-time systems built to scale.
@@ -582,7 +582,7 @@ function MobileHero() {
             shipping high-concurrency{' '}
             <span className="font-medium text-[#E9C767]">Node.js &amp; NestJS</span>{' '}
             backends, fluid{' '}
-            <span className="font-medium text-[#E9C767]">React &amp; Next.js</span>{' '}
+            <span className="font-medium text-[#E9C767]">React &amp; TypeScript</span>{' '}
             interfaces, and autonomous{' '}
             <span className="font-medium text-[#E9C767]">LLM orchestration</span>{' '}
             pipelines &mdash; secure, real-time systems built to scale.

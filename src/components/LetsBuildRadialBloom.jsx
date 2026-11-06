@@ -4,15 +4,18 @@ import {
   SiCplusplus,
   SiPython,
   SiReact,
-  SiNextdotjs,
+  SiTypescript,
   SiNodedotjs,
-  SiExpress,
-  SiMongodb,
+  SiNestjs,
   SiPostgresql,
+  SiRedis,
   SiDocker,
-  SiGoogle,
+  SiPrometheus,
+  SiGrafana,
+  SiEspressif,
+  SiMqtt,
 } from 'react-icons/si';
-import { FiCloud, FiAward, FiTerminal } from 'react-icons/fi';
+import { FiCloud, FiTerminal } from 'react-icons/fi';
 
 /**
  * LET'S BUILD — a clean, self-contained showcase.
@@ -39,58 +42,66 @@ const TILES = [
   },
   {
     id: 'react',
-    name: 'NEXT.JS / REACT',
+    name: 'REACT / TYPESCRIPT',
     sub: 'Frontend Tech',
     logos: [
       { Icon: SiReact, name: 'React.js', color: '#61DAFB' },
-      { Icon: SiNextdotjs, name: 'Next.js', color: '#E8DFD8' },
+      { Icon: SiTypescript, name: 'TypeScript', color: '#3178C6' },
     ],
   },
   {
     id: 'node',
-    name: 'NODE.JS / EXPRESS',
-    sub: 'REST & WebSockets',
+    name: 'NODE.JS / NESTJS',
+    sub: 'REST & RBAC',
     logos: [
       { Icon: SiNodedotjs, name: 'Node.js', color: '#339933' },
-      { Icon: SiExpress, name: 'Express.js', color: '#E8DFD8' },
+      { Icon: SiNestjs, name: 'NestJS', color: '#E0234E' },
     ],
   },
   {
     id: 'db',
-    name: 'MONGODB / POSTGRES',
+    name: 'POSTGRES / REDIS',
     sub: 'Prisma & SQL',
     logos: [
-      { Icon: SiMongodb, name: 'MongoDB', color: '#47A248' },
       { Icon: SiPostgresql, name: 'PostgreSQL', color: '#699ECA' },
+      { Icon: SiRedis, name: 'Redis', color: '#FF4438' },
     ],
   },
   {
     id: 'cloud',
     name: 'AWS & DOCKER',
-    sub: 'EC2 & SES',
+    sub: 'EC2 & CI/CD',
     logos: [
       { Icon: FiCloud, name: 'AWS', color: '#FF9900' },
       { Icon: SiDocker, name: 'Docker', color: '#2496ED' },
     ],
   },
   {
-    id: 'ai',
-    name: 'GOOGLE ANTIGRAVITY',
-    sub: 'Agentic AI',
-    logos: [{ Icon: SiGoogle, name: 'Google', color: '#4285F4' }],
+    id: 'obs',
+    name: 'OBSERVABILITY',
+    sub: 'Prometheus & Grafana',
+    logos: [
+      { Icon: SiPrometheus, name: 'Prometheus', color: '#E6522C' },
+      { Icon: SiGrafana, name: 'Grafana', color: '#F46800' },
+    ],
   },
   {
-    id: 'sih',
-    name: 'SIH HACKATHON',
-    sub: 'Top Tier Team',
-    logos: [{ Icon: FiAward, name: 'Achievement', color: '#D4AF37' }],
+    id: 'iot',
+    name: 'IOT TELEMETRY',
+    sub: 'ESP32 & MQTT',
+    logos: [
+      { Icon: SiEspressif, name: 'ESP32', color: '#E7352C' },
+      { Icon: SiMqtt, name: 'MQTT', color: '#B07BB0' },
+    ],
   },
   {
     id: 'dsa',
     name: 'DSA & OOPS',
+    sub: '250+ LeetCode',
     logos: [{ Icon: FiTerminal, name: 'DSA', color: '#E8DFD8' }],
   },
 ];
+
 
 // ---- Stage geometry (unscaled 740-space; scaled as a unit to fit) ----
 // The whole stage is transform-scaled to fit the viewport (~0.69 on a 768p
